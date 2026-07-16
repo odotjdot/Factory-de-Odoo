@@ -353,13 +353,19 @@ class ExtensionFieldSpec(BaseModel):
     comodel: str | None = None
     comodel_name: str | None = None
     selection: list = []
+    selection_add: list = []
     values: list | None = None  # Alias for selection; preprocessor normalizes
     required: bool = False
+    readonly: bool = False
+    index: bool = False
+    default: Any = None
+    ondelete: str | dict[str, str] | None = None
     store: bool | None = None
     compute: str | None = None
     depends: list[str] = []
     groups: str | None = None
     inverse_name: str | None = None
+    help: str = ""
 
     @field_validator("type")
     @classmethod

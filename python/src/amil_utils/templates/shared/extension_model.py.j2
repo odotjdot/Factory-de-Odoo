@@ -9,13 +9,36 @@ class {{ class_name }}(models.Model):
 {% if field.type == 'Selection' %}
     {{ field.name }} = fields.Selection(
         string="{{ field.string | default(field.name | replace('_', ' ') | title) }}",
+{% if field.selection_add is defined and field.selection_add %}
+        selection_add=[
+{% for opt in field.selection_add %}
+            ("{{ opt[0] }}", "{{ opt[1] }}"),
+{% endfor %}
+        ],
+{% else %}
         selection=[
 {% for opt in field.selection %}
             ("{{ opt[0] }}", "{{ opt[1] }}"),
 {% endfor %}
         ],
+{% endif %}
 {% if field.required is defined and field.required %}
         required=True,
+{% endif %}
+{% if field.default is defined and field.default is not none %}
+        default={{ ('"' ~ field.default ~ '"') if field.default is string else field.default }},
+{% endif %}
+{% if field.ondelete is defined and field.ondelete %}
+        ondelete={{ field.ondelete }},
+{% endif %}
+{% if field.readonly is defined and field.readonly %}
+        readonly=True,
+{% endif %}
+{% if field.index is defined and field.index %}
+        index=True,
+{% endif %}
+{% if 'copy' in field and not field['copy'] %}
+        copy=False,
 {% endif %}
 {% if field.groups is defined and field.groups %}
         groups="{{ field.groups }}",
@@ -31,6 +54,21 @@ class {{ class_name }}(models.Model):
 {% if field.required is defined and field.required %}
         required=True,
 {% endif %}
+{% if field.default is defined and field.default is not none %}
+        default={{ ('"' ~ field.default ~ '"') if field.default is string else field.default }},
+{% endif %}
+{% if field.ondelete is defined and field.ondelete %}
+        ondelete="{{ field.ondelete }}",
+{% endif %}
+{% if field.readonly is defined and field.readonly %}
+        readonly=True,
+{% endif %}
+{% if field.index is defined and field.index %}
+        index=True,
+{% endif %}
+{% if 'copy' in field and not field['copy'] %}
+        copy=False,
+{% endif %}
 {% if field.groups is defined and field.groups %}
         groups="{{ field.groups }}",
 {% endif %}
@@ -42,6 +80,15 @@ class {{ class_name }}(models.Model):
 {% if field.store is defined and field.store %}
         store=True,
 {% endif %}
+{% if field.readonly is defined and field.readonly %}
+        readonly=True,
+{% endif %}
+{% if field.index is defined and field.index %}
+        index=True,
+{% endif %}
+{% if 'copy' in field and not field['copy'] %}
+        copy=False,
+{% endif %}
 {% if field.groups is defined and field.groups %}
         groups="{{ field.groups }}",
 {% endif %}
@@ -51,6 +98,18 @@ class {{ class_name }}(models.Model):
         string="{{ field.string | default(field.name | replace('_', ' ') | title) }}",
 {% if field.required is defined and field.required %}
         required=True,
+{% endif %}
+{% if field.default is defined and field.default is not none %}
+        default={{ ('"' ~ field.default ~ '"') if field.default is string else field.default }},
+{% endif %}
+{% if field.readonly is defined and field.readonly %}
+        readonly=True,
+{% endif %}
+{% if field.index is defined and field.index %}
+        index=True,
+{% endif %}
+{% if 'copy' in field and not field['copy'] %}
+        copy=False,
 {% endif %}
 {% if field.groups is defined and field.groups %}
         groups="{{ field.groups }}",

@@ -2220,6 +2220,82 @@ def _make_chain_spec(
 class TestValidateNoCycles:
     """Unit tests for _validate_no_cycles()."""
 
+    def test_schema_nested_chains_pass(self):
+        """Canonical ModuleSpec chain_id/steps shape is accepted."""
+        spec = _make_chain_spec(
+            models=[
+                {
+                    "name": "test.order",
+                    "fields": [
+                        {"name": "amount", "type": "Float"},
+                        {"name": "tax", "type": "Float"},
+                        {"name": "total", "type": "Float"},
+                    ],
+                },
+            ],
+            computation_chains=[
+                {
+                    "chain_id": "order_total",
+                    "steps": [
+                        {
+                            "model": "test.order",
+                            "field": "tax",
+                            "type": "Float",
+                            "source": "computation",
+                            "depends": ["amount"],
+                        },
+                        {
+                            "model": "test.order",
+                            "field": "total",
+                            "type": "Float",
+                            "source": "computation",
+                            "depends": ["amount", "tax"],
+                        },
+                    ],
+                },
+            ],
+        )
+
+        _validate_no_cycles(spec)
+
+    def test_schema_nested_chains_detect_cycle(self):
+        """Canonical nested chain still rejects circular dependencies."""
+        spec = _make_chain_spec(
+            models=[
+                {
+                    "name": "test.order",
+                    "fields": [
+                        {"name": "subtotal", "type": "Float"},
+                        {"name": "total", "type": "Float"},
+                    ],
+                },
+            ],
+            computation_chains=[
+                {
+                    "chain_id": "invalid_total",
+                    "steps": [
+                        {
+                            "model": "test.order",
+                            "field": "subtotal",
+                            "type": "Float",
+                            "source": "computation",
+                            "depends": ["total"],
+                        },
+                        {
+                            "model": "test.order",
+                            "field": "total",
+                            "type": "Float",
+                            "source": "computation",
+                            "depends": ["subtotal"],
+                        },
+                    ],
+                },
+            ],
+        )
+
+        with pytest.raises(ValueError, match="Circular dependency"):
+            _validate_no_cycles(spec)
+
     def test_valid_chains_pass(self):
         """Spec with valid A->B chain passes without error."""
         spec = _make_chain_spec(

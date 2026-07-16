@@ -25,9 +25,26 @@ def _validate_no_cycles(spec: dict[str, Any]) -> None:
     if not chains:
         return
 
+    # ModuleSpec stores chains as ``{chain_id, steps: [...]}``, while older
+    # callers still pass one flat ``{field, depends_on}`` entry per field.
+    # Normalize both shapes before building the graph.
+    entries: list[dict[str, Any]] = []
+    for chain in chains:
+        steps = chain.get("steps")
+        if steps is None:
+            entries.append(chain)
+            continue
+        entries.extend(
+            {
+                "field": f"{step['model']}.{step['field']}",
+                "depends_on": step.get("depends", []),
+            }
+            for step in steps
+        )
+
     # Build dependency graph: node = "model.field", edges = depends_on
     graph: dict[str, set[str]] = {}
-    for chain in chains:
+    for chain in entries:
         node = chain["field"]  # e.g., "university.student.gpa"
         model_name = node.rsplit(".", 1)[0]
         deps: set[str] = set()
@@ -41,7 +58,7 @@ def _validate_no_cycles(spec: dict[str, Any]) -> None:
             else:
                 # Local field -- only add if it's also a chain node
                 local_node = f"{model_name}.{dep}"
-                if any(c["field"] == local_node for c in chains):
+                if any(c["field"] == local_node for c in entries):
                     deps.add(local_node)
         graph[node] = deps
 

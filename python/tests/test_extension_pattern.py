@@ -418,6 +418,51 @@ class TestExtensionModelRender:
         assert "from odoo import fields, models" in content
         assert "api" not in content.split("from odoo import")[1].split("\n")[0]
 
+    def test_extension_field_runtime_attributes_render(self) -> None:
+        """Extension fields preserve selection_add and security/runtime kwargs."""
+        spec = {
+            "module_name": "storage_s3",
+            "depends": ["base"],
+            "extends": [{
+                "base_model": "storage.item",
+                "base_module": "storage_core",
+                "add_fields": [
+                    {
+                        "name": "drift_type",
+                        "type": "Selection",
+                        "selection_add": [["orphan", "Orphan"]],
+                        "ondelete": {"orphan": "set default"},
+                        "default": "orphan",
+                        "readonly": True,
+                        "index": True,
+                        "copy": False,
+                    },
+                    {
+                        "name": "require_versioning",
+                        "type": "Boolean",
+                        "default": True,
+                        "readonly": True,
+                        "index": True,
+                    },
+                ],
+                "add_computed": [],
+                "add_constraints": [],
+                "add_methods": [],
+                "view_extensions": [],
+            }],
+        }
+
+        content = self._render_extension_model(spec)
+
+        assert "selection_add=[" in content
+        assert '("orphan", "Orphan")' in content
+        assert "ondelete={'orphan': 'set default'}" in content
+        assert 'default="orphan"' in content
+        assert "default=True" in content
+        assert content.count("readonly=True") == 2
+        assert content.count("index=True") == 2
+        assert "copy=False" in content
+
 
 class TestExtensionViewRender:
     """Test extension_views.xml.j2 template rendering."""
