@@ -99,7 +99,7 @@ class ModelSpec(BaseModel):
     cacheable: bool = False
     archival: bool = False
     no_active: bool = False
-    record_rules: list[str] | None = None
+    record_rules: list[str | dict[str, Any]] | None = None
     related_counts: list[RelatedCountSpec] = []
     server_actions: list[ServerActionSpec] = []
     display_name_pattern: str | None = None

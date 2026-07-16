@@ -669,6 +669,30 @@ class TestModuleDiagrams:
         assert (output_dir / "dependencies.mmd").exists()
         assert (output_dir / "er_diagram.mmd").exists()
 
+    def test_accepts_canonical_module_spec_model_shape(
+        self,
+        tmp_path: Path,
+        registry_with_models: ModelRegistry,
+    ) -> None:
+        from amil_utils.mermaid import generate_module_diagrams
+
+        spec = {
+            "module_name": "uni_fee",
+            "models": [
+                {
+                    "name": "uni.fee.invoice",
+                    "fields": [{"name": "name", "type": "Char"}],
+                    "inherit": ["mail.thread"],
+                    "description": "Fee Invoice",
+                },
+            ],
+            "depends": ["base", "mail"],
+        }
+
+        generate_module_diagrams("uni_fee", spec, registry_with_models, tmp_path / "docs")
+
+        assert "uni_fee_invoice" in (tmp_path / "docs" / "er_diagram.mmd").read_text()
+
     def test_creates_output_dir(
         self,
         tmp_path: Path,

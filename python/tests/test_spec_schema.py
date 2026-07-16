@@ -171,6 +171,40 @@ class TestInnerModelTypoWarning:
         dumped = model.model_dump()
         assert dumped["custom_odoo_field"] is True
 
+    def test_model_spec_accepts_structured_custom_record_rules(self):
+        """Schema accepts the dict rules supported by the security preprocessor."""
+        model = ModelSpec(
+            name="test.model",
+            record_rules=[
+                {
+                    "name": "own_records",
+                    "group": "user",
+                    "domain_force": "[('user_id', '=', user.id)]",
+                }
+            ],
+        )
+
+        assert model.record_rules[0]["name"] == "own_records"
+
+    def test_module_security_preserves_model_acl_overrides(self):
+        """Top-level model->role CRUD overrides survive schema normalization."""
+        spec = ModuleSpec(
+            module_name="test_module",
+            security={
+                "roles": ["auditor", "manager"],
+                "defaults": {"auditor": "r", "manager": "cru"},
+                "acl": {
+                    "test.audit": {"auditor": "r", "manager": "cr"},
+                },
+            },
+        )
+
+        dumped = spec.model_dump()
+        assert dumped["security"]["acl"]["test.audit"] == {
+            "auditor": "r",
+            "manager": "cr",
+        }
+
 
 # ---------------------------------------------------------------------------
 # TestCrossRefValidators

@@ -87,6 +87,33 @@ _KNOWN_MIXIN_MODELS: frozenset[str] = frozenset({
 _RELATIONAL_TYPES = frozenset({"Many2one", "One2many", "Many2many"})
 
 
+def _spec_model_name(model: dict[str, Any]) -> str:
+    """Return a model name from canonical ModuleSpec or legacy registry shape."""
+    return str(model.get("name") or model.get("_name") or "")
+
+
+def _spec_model_inherits(model: dict[str, Any]) -> list[str]:
+    """Normalize canonical ``inherit`` and legacy ``_inherit`` to a list."""
+    inherits = model.get("inherit", model.get("_inherit", []))
+    if not inherits:
+        return []
+    if isinstance(inherits, str):
+        return [inherits]
+    return list(inherits)
+
+
+def _spec_model_fields(model: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """Normalize canonical field lists and legacy field maps to a keyed map."""
+    fields = model.get("fields", {})
+    if isinstance(fields, list):
+        return {
+            str(field_def["name"]): field_def
+            for field_def in fields
+            if field_def.get("name")
+        }
+    return dict(fields)
+
+
 class ModelRegistry:
     """Central model registry for cross-module awareness.
 
@@ -185,17 +212,15 @@ class ModelRegistry:
         # Register each model from the spec
         new_model_names: set[str] = set()
         for model in spec.get("models", []):
-            model_name: str = model["_name"]
+            model_name = _spec_model_name(model)
             new_model_names.add(model_name)
-            inherits = model.get("_inherit", [])
-            if isinstance(inherits, str):
-                inherits = [inherits]
+            inherits = _spec_model_inherits(model)
 
             # Separate mixins from regular inherits (REG-4.2)
             mixins = [inh for inh in inherits if self._is_mixin(inh)]
             non_mixin_inherits = [inh for inh in inherits if inh not in mixins]
 
-            new_fields = model.get("fields", {})
+            new_fields = _spec_model_fields(model)
             self._models[model_name] = ModelEntry(
                 module=module_name,
                 fields=new_fields,
@@ -278,7 +303,7 @@ class ModelRegistry:
         if not old_models:
             return warnings
 
-        new_model_names = {m["_name"] for m in new_spec.get("models", [])}
+        new_model_names = {_spec_model_name(m) for m in new_spec.get("models", [])}
 
         # Removed models
         for old_name in sorted(set(old_models.keys()) - new_model_names):
@@ -288,11 +313,11 @@ class ModelRegistry:
 
         # Removed fields in surviving models
         for model in new_spec.get("models", []):
-            model_name: str = model["_name"]
+            model_name = _spec_model_name(model)
             if model_name not in old_models:
                 continue
             old_field_names = set(old_models[model_name].fields.keys())
-            new_field_names = set(model.get("fields", {}).keys())
+            new_field_names = set(_spec_model_fields(model))
             for removed in sorted(old_field_names - new_field_names):
                 warnings.append(
                     f"BREAKING: Field '{model_name}.{removed}' removed"
@@ -316,7 +341,7 @@ class ModelRegistry:
         seen_names: list[str] = []
 
         for model in spec.get("models", []):
-            model_name: str = model["_name"]
+            model_name = _spec_model_name(model)
 
             # Duplicate _name check
             if model_name in seen_names:
@@ -326,16 +351,14 @@ class ModelRegistry:
             seen_names.append(model_name)
 
             # Self-inherit check
-            inherits = model.get("_inherit", [])
-            if isinstance(inherits, str):
-                inherits = [inherits]
+            inherits = _spec_model_inherits(model)
             if model_name in inherits:
                 result.errors.append(
                     f"ERROR: Model '{model_name}' inherits from itself"
                 )
 
             # Comodel validation for relational fields
-            for field_name, field_def in model.get("fields", {}).items():
+            for field_name, field_def in _spec_model_fields(model).items():
                 ftype = field_def.get("type", "")
                 comodel = field_def.get("comodel_name")
                 if ftype in _RELATIONAL_TYPES and comodel:
@@ -355,7 +378,7 @@ class ModelRegistry:
             return True
         # Check models being defined in the current spec
         for model in spec.get("models", []):
-            if model["_name"] == model_name:
+            if _spec_model_name(model) == model_name:
                 return True
         return False
 
@@ -371,16 +394,14 @@ class ModelRegistry:
 
         for model in spec.get("models", []):
             # From inherits / mixins
-            inherits = model.get("_inherit", [])
-            if isinstance(inherits, str):
-                inherits = [inherits]
+            inherits = _spec_model_inherits(model)
             for inh in inherits:
                 owner = self._find_owning_module(inh)
                 if owner and owner not in explicit:
                     inferred.add(owner)
 
             # From relational field comodels
-            for _field_name, field_def in model.get("fields", {}).items():
+            for _field_name, field_def in _spec_model_fields(model).items():
                 ftype = field_def.get("type", "")
                 comodel = field_def.get("comodel_name")
                 if ftype in _RELATIONAL_TYPES and comodel:

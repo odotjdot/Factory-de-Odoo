@@ -6,6 +6,7 @@ Tests for _build_model_context() new context keys and render_module() extended c
 from __future__ import annotations
 
 import tempfile
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import pytest
@@ -104,6 +105,35 @@ class TestBuildModelContextComputedFields:
         spec = _make_spec(models=[model])
         ctx = _build_model_context(spec, model)
         assert ctx["has_computed"] is False
+
+    def test_shared_compute_method_is_grouped_with_all_targets(self):
+        model = {
+            "name": "test.model",
+            "fields": [
+                {
+                    "name": "busy_start",
+                    "type": "Datetime",
+                    "compute": "_compute_busy_window",
+                    "depends": ["start", "buffer_before"],
+                },
+                {
+                    "name": "busy_end",
+                    "type": "Datetime",
+                    "compute": "_compute_busy_window",
+                    "depends": ["end", "buffer_after"],
+                },
+            ],
+        }
+
+        ctx = _build_model_context(_make_spec(models=[model]), model)
+
+        assert ctx["computed_methods"] == [
+            {
+                "name": "_compute_busy_window",
+                "depends": ["start", "buffer_before", "end", "buffer_after"],
+                "targets": ctx["computed_fields"],
+            }
+        ]
 
 
 class TestBuildModelContextOnchangeFields:
@@ -665,6 +695,39 @@ class TestRenderModuleRecordRules:
             assert "security/record_rules.xml" in content, (
                 f"'security/record_rules.xml' not found in __manifest__.py. Content:\n{content}"
             )
+
+    def test_generated_xml_escapes_descriptions_and_domain_operators(self, tmp_path):
+        spec = {
+            "module_name": "test_xml_escape",
+            "module_title": "Q&A Controls",
+            "depends": ["base"],
+            "models": [
+                {
+                    "name": "test.qa.reply",
+                    "description": "Immutable Q&A reply",
+                    "fields": [
+                        {"name": "name", "type": "Char"},
+                        {"name": "company_id", "type": "Many2one", "comodel_name": "res.company"},
+                    ],
+                    "record_rules": ["company"],
+                    "custom_record_rules": [
+                        {
+                            "xml_id": "rule_test_qa_member",
+                            "name": "member_visible",
+                            "label": "Q&A: member-visible",
+                            "domain_force": "['&', ('company_id', 'in', company_ids), ('create_uid', '=', user.id)]",
+                        }
+                    ],
+                }
+            ],
+        }
+
+        files, _ = render_module(spec, get_template_dir(), tmp_path)
+
+        xml_files = [Path(path) for path in files if str(path).endswith(".xml")]
+        assert xml_files
+        for xml_file in xml_files:
+            ET.parse(xml_file)
 
 
 # ---------------------------------------------------------------------------

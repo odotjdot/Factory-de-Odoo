@@ -119,6 +119,36 @@ class TestRegisterRemove:
         assert "uni.fee" in registry._models
         assert "amount" in registry._models["uni.fee"].fields
 
+    def test_registers_canonical_module_spec_shape(self, registry: ModelRegistry) -> None:
+        """Registry accepts ModuleSpec name/list-fields alongside legacy _name maps."""
+        spec = {
+            "module_name": "fm_storage",
+            "depends": ["base"],
+            "models": [
+                {
+                    "name": "fm.storage.item",
+                    "inherit": "mail.thread",
+                    "description": "Storage Item",
+                    "fields": [
+                        {"name": "name", "type": "Char"},
+                        {
+                            "name": "partner_id",
+                            "type": "Many2one",
+                            "comodel_name": "res.partner",
+                        },
+                    ],
+                }
+            ],
+        }
+
+        diff = registry.register_module("fm_storage", spec)
+        validation = registry.validate_comodels(spec)
+
+        assert diff.added_models == ["fm.storage.item"]
+        assert set(registry._models["fm.storage.item"].fields) == {"name", "partner_id"}
+        assert registry._models["fm.storage.item"].mixins == ["mail.thread"]
+        assert validation.errors == []
+
     def test_remove_module(self, registry: ModelRegistry) -> None:
         """remove_module() removes all its models and dependency_graph entry."""
         spec = _make_spec()

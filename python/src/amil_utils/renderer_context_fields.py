@@ -87,6 +87,19 @@ def _build_field_context(model: dict[str, Any], fields: list[dict[str, Any]]) ->
     computed_fields = [f for f in fields if f.get("compute")]
     if len(computed_fields) > 1:
         computed_fields = _topologically_sort_fields(computed_fields)
+    computed_methods: list[dict[str, Any]] = []
+    methods_by_name: dict[str, dict[str, Any]] = {}
+    for computed_field in computed_fields:
+        method_name = computed_field["compute"]
+        method = methods_by_name.get(method_name)
+        if method is None:
+            method = {"name": method_name, "depends": [], "targets": []}
+            methods_by_name[method_name] = method
+            computed_methods.append(method)
+        method["targets"].append(computed_field)
+        for dependency in computed_field.get("depends", []):
+            if dependency not in method["depends"]:
+                method["depends"].append(dependency)
     onchange_fields = [f for f in fields if f.get("onchange")]
     constrained_fields = [f for f in fields if f.get("constrains")]
     sequence_fields = [
@@ -125,6 +138,7 @@ def _build_field_context(model: dict[str, Any], fields: list[dict[str, Any]]) ->
     return {
         "fields": fields,  # may be updated with monetary rewrites
         "computed_fields": computed_fields,
+        "computed_methods": computed_methods,
         "onchange_fields": onchange_fields,
         "constrained_fields": constrained_fields,
         "sequence_fields": sequence_fields,

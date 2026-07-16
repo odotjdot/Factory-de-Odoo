@@ -220,13 +220,15 @@ class {{ model_name | to_class }}(models.Model):
     def _default_{{ field.name }}(self):
         return self.env["ir.sequence"].next_by_code("{{ field.sequence_code | default(model_name) }}") or "/"
 {% endfor %}
-{% for field in computed_fields %}
+{% for method in computed_methods %}
 
-    @api.depends({% for dep in field.depends %}"{{ dep }}"{% if not loop.last %}, {% endif %}{% endfor %})
-    def {{ field.compute }}(self):
-        # TODO: implement — depends on {{ field.depends | join(', ') }}
+    @api.depends({% for dep in method.depends %}"{{ dep }}"{% if not loop.last %}, {% endif %}{% endfor %})
+    def {{ method.name }}(self):
+        # TODO: implement — depends on {{ method.depends | join(', ') }}
         for rec in self:
+{% for field in method.targets %}
             rec.{{ field.name }} = {{ 0.0 if field.type in ('Float', 'Monetary', 'Integer') else False if field.type == 'Boolean' else "''" }}
+{% endfor %}
 {% endfor %}
 {% for field in onchange_fields %}
 

@@ -380,18 +380,28 @@ def _extract_arch_field_refs(
     group_refs: list[tuple[str, int]],
 ) -> None:
     """Extract field name references from inside arch (form/tree/search)."""
-    # Walk all elements inside arch
-    for elem in arch_node.iter():
-        # Field references inside form/tree/search
-        if elem.tag == "field":
+    def visit(elem: ET.Element, inside_field: bool = False) -> None:
+        # A list/form nested inside a relational <field> is rendered against
+        # that field's comodel, not the outer view model.  The lightweight XML
+        # parser does not have the Python model graph here, so validate the
+        # relational field itself and leave its embedded subview to Odoo/OLS.
+        if elem.tag == "field" and not inside_field:
             fname = elem.get("name", "")
             if fname and view_model:
                 field_refs.append((view_model, fname, 1))
 
-        # Group references (groups="module.group_name")
         groups_attr = elem.get("groups", "")
         if groups_attr:
             for grp in groups_attr.split(","):
                 grp = grp.strip()
                 if grp:
                     group_refs.append((grp, 1))
+
+        child_inside_field = inside_field or elem.tag == "field"
+        for child in elem:
+            visit(child, child_inside_field)
+
+    # ``arch_node`` is itself <field name="arch"> metadata. Its children are
+    # the actual view architecture and begin outside any model field.
+    for child in arch_node:
+        visit(child)

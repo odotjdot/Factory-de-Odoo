@@ -7,7 +7,7 @@
         <field name="name">{{ model_name }}.view.form</field>
         <field name="model">{{ model_name }}</field>
         <field name="arch" type="xml">
-            <form string="{{ model_description }}">
+            <form string="{{ model_description | e }}">
 {% if state_field or model_reports or has_approval or has_document_verification %}
                 <header>
                     <!-- Action buttons enriched by odoo-view-gen in generate.md Wave 2 -->
@@ -219,7 +219,7 @@
         <field name="name">{{ model_name }}.view.list</field>
         <field name="model">{{ model_name }}</field>
         <field name="arch" type="xml">
-            <list string="{{ model_description }}"
+            <list string="{{ model_description | e }}"
 {% if state_field %}
                   decoration-info="{{ state_field.name }} == 'draft'"
                   decoration-success="{{ state_field.name }} in ('done', 'approved', 'active')"
@@ -243,7 +243,7 @@
         <field name="name">{{ model_name }}.view.search</field>
         <field name="model">{{ model_name }}</field>
         <field name="arch" type="xml">
-            <search string="{{ model_description }}">
+            <search string="{{ model_description | e }}">
 {% for field in view_fields | default(fields) %}
 {% if field.type in ('Char', 'Many2one') %}
                 <field name="{{ field.name }}"/>

@@ -204,6 +204,45 @@ class TestE3FieldReferences:
         e3 = [i for i in result.errors if i.code == "E3"]
         assert e3 == []
 
+    def test_nested_relational_list_fields_are_not_checked_on_parent(self, tmp_path: Path) -> None:
+        """Fields inside a relational field's embedded list belong to its comodel."""
+        mod = _make_valid_module(tmp_path)
+        _write(mod / "models" / "partner.py", """\
+            from odoo import fields, models
+
+            class ResPartnerExt(models.Model):
+                _name = 'res.partner.ext'
+
+                name = fields.Char()
+                line_ids = fields.One2many('res.partner.ext.line', 'partner_id')
+
+            class ResPartnerExtLine(models.Model):
+                _name = 'res.partner.ext.line'
+
+                partner_id = fields.Many2one('res.partner.ext')
+                detail = fields.Char()
+        """)
+        _write(mod / "views" / "partner_views.xml", """\
+            <odoo>
+                <record id="view_partner_ext_form" model="ir.ui.view">
+                    <field name="name">partner.ext.form</field>
+                    <field name="model">res.partner.ext</field>
+                    <field name="arch" type="xml">
+                        <form>
+                            <field name="line_ids">
+                                <list><field name="detail"/></list>
+                            </field>
+                        </form>
+                    </field>
+                </record>
+            </odoo>
+        """)
+
+        result = semantic_validate(mod)
+
+        e3 = [i for i in result.errors if i.code == "E3"]
+        assert e3 == []
+
 
 # ===========================================================================
 # E4: ACL References

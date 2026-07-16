@@ -32,27 +32,27 @@
 {% if "approval" in model.record_rule_scopes %}
 {% for rule in model.get("approval_record_rules", []) %}
     <record id="{{ rule.xml_id }}" model="ir.rule">
-        <field name="name">{{ rule.name }}</field>
+        <field name="name">{{ rule.name | e }}</field>
         <field name="model_id" ref="{{ model.name | model_ref }}"/>
 {% if rule.get("group_xml_id") %}
         <field name="groups" eval="[(4, ref('{{ rule.group_xml_id }}'))]"/>
 {% else %}
         <field name="global" eval="True"/>
 {% endif %}
-        <field name="domain_force">{{ rule.domain_force }}</field>
+        <field name="domain_force">{{ rule.domain_force | e }}</field>
     </record>
 {% endfor %}
 {% endif %}
 {% for rule in model.get("custom_record_rules", []) %}
     <record id="{{ rule.xml_id }}" model="ir.rule">
-        <field name="name">{{ rule.get("label", rule.get("name", "Custom Rule")) }}</field>
+        <field name="name">{{ rule.get("label", rule.get("name", "Custom Rule")) | e }}</field>
         <field name="model_id" ref="{{ model.name | model_ref }}"/>
 {% if rule.get("group_xml_id") %}
         <field name="groups" eval="[(4, ref('{{ rule.group_xml_id }}'))]"/>
 {% else %}
         <field name="global" eval="True"/>
 {% endif %}
-        <field name="domain_force">{{ rule.domain_force }}</field>
+        <field name="domain_force">{{ rule.domain_force | e }}</field>
     </record>
 {% endfor %}
 {% endfor %}

@@ -333,7 +333,10 @@ class SecurityBlockSpec(BaseModel):
     model_config = ConfigDict(extra="allow", protected_namespaces=())
 
     roles: list[str] = []
-    acl: dict[str, SecurityACLSpec] = {}
+    # Model-level blocks use role -> SecurityACLSpec, while the module-level
+    # security preprocessor accepts model -> role -> CRUD-string overrides.
+    # Keep both shapes lossless through Pydantic normalization.
+    acl: dict[str, dict[str, str] | SecurityACLSpec] = {}
     defaults: dict[str, str] = {}
 
 

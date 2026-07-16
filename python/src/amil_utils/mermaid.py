@@ -18,7 +18,13 @@ import re
 from pathlib import Path
 from typing import Any
 
-from amil_utils.registry import ModelEntry, ModelRegistry
+from amil_utils.registry import (
+    ModelEntry,
+    ModelRegistry,
+    _spec_model_fields,
+    _spec_model_inherits,
+    _spec_model_name,
+)
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -302,13 +308,11 @@ def generate_module_diagrams(
     # Build models dict from spec
     spec_models: dict[str, ModelEntry] = {}
     for model in spec.get("models", []):
-        model_name = model["_name"]
-        inherits = model.get("_inherit", [])
-        if isinstance(inherits, str):
-            inherits = [inherits]
+        model_name = _spec_model_name(model)
+        inherits = _spec_model_inherits(model)
         spec_models[model_name] = ModelEntry(
             module=module_name,
-            fields=model.get("fields", {}),
+            fields=_spec_model_fields(model),
             inherits=inherits,
             description=model.get("description", ""),
         )
