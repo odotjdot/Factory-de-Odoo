@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import logging
 import os
+import secrets
 import shutil
 import subprocess
 import time
@@ -33,14 +34,35 @@ _TEARDOWN_TIMEOUT_S: int = 60
 
 # Only these host env vars are passed to Docker compose subprocesses.
 # Prevents leaking secrets (AWS keys, GitHub tokens, etc.) — CWE-200.
-_PASSTHROUGH_ENV_VARS = frozenset({
-    "PATH", "HOME", "USER", "LANG", "LC_ALL",
-    "DOCKER_HOST", "DOCKER_CERT_PATH", "DOCKER_TLS_VERIFY",
-    "DOCKER_CONFIG", "COMPOSE_FILE", "COMPOSE_PROJECT_NAME",
-    "TMPDIR", "TMP", "TEMP",
-    # Factory-specific vars needed by compose files
-    "FACTORY_DB_PASSWORD", "ODOO_MAJOR_VERSION", "POSTGRES_VERSION",
-})
+_PASSTHROUGH_ENV_VARS = frozenset(
+    {
+        "PATH",
+        "HOME",
+        "USER",
+        "LANG",
+        "LC_ALL",
+        "DOCKER_HOST",
+        "DOCKER_CERT_PATH",
+        "DOCKER_TLS_VERIFY",
+        "DOCKER_CONFIG",
+        "COMPOSE_FILE",
+        "COMPOSE_PROJECT_NAME",
+        "TMPDIR",
+        "TMP",
+        "TEMP",
+        # Factory-specific vars needed by compose files
+        "FACTORY_DB_PASSWORD",
+        "ODOO_MAJOR_VERSION",
+        "POSTGRES_VERSION",
+    }
+)
+
+
+def _command_failure(exc: subprocess.CalledProcessError) -> str:
+    """Return a bounded diagnostic without exposing the child environment."""
+    output = f"{exc.stdout or ''}{exc.stderr or ''}".strip()
+    tail = output[-16000:] if output else "no command output"
+    return f"Docker command exited {exc.returncode}: {tail}"
 
 
 def _unique_project_name(module_name: str) -> str:
@@ -66,6 +88,7 @@ def check_docker_available() -> bool:
             ["docker", "info"],
             capture_output=True,
             timeout=_DOCKER_INFO_TIMEOUT_S,
+            check=False,
         )
         return result.returncode == 0
     except (subprocess.TimeoutExpired, OSError):
@@ -121,6 +144,7 @@ def _run_compose(
         text=True,
         timeout=timeout,
         env=merged_env,
+        check=True,
     )
 
 
@@ -157,6 +181,7 @@ def _teardown(
                 capture_output=True,
                 timeout=_TEARDOWN_TIMEOUT_S,
                 env=merged_env,
+                check=False,
             )
             return  # Success — exit immediately
         except Exception as exc:
@@ -260,6 +285,7 @@ def docker_install_module(
         "MODULE_PATH": str(module_path.resolve()),
         "MODULE_NAME": module_name,
         "ODOO_MAJOR_VERSION": major,
+        "FACTORY_DB_PASSWORD": os.environ.get("FACTORY_DB_PASSWORD", secrets.token_hex(32)),
     }
 
     try:
@@ -309,7 +335,9 @@ def docker_install_module(
         )
     except subprocess.TimeoutExpired:
         return Result.fail(f"Timeout after {timeout}s waiting for module install")
-    except Exception as exc:
+    except subprocess.CalledProcessError as exc:
+        return Result.fail(_command_failure(exc))
+    except Exception as exc:  # noqa: BLE001 - public Result boundary contains infrastructure failures
         return Result.fail(str(exc))
     finally:
         _teardown(compose_file, env, project_name=project_name)
@@ -357,6 +385,7 @@ def docker_run_tests(
         "MODULE_PATH": str(module_path.resolve()),
         "MODULE_NAME": module_name,
         "ODOO_MAJOR_VERSION": major,
+        "FACTORY_DB_PASSWORD": os.environ.get("FACTORY_DB_PASSWORD", secrets.token_hex(32)),
     }
 
     try:
@@ -399,10 +428,17 @@ def docker_run_tests(
         )
 
         combined_output = result.stdout + result.stderr
-        return Result.ok(parse_test_log(combined_output))
+        test_results = parse_test_log(combined_output)
+        if not test_results:
+            return Result.fail("Odoo completed without emitting any parseable module tests")
+        return Result.ok(test_results)
     except subprocess.TimeoutExpired:
         logger.warning("Docker test run timed out after %ds", timeout)
         return Result.fail(f"Docker test run timed out after {timeout}s")
+    except subprocess.CalledProcessError as exc:
+        diagnostic = _command_failure(exc)
+        logger.warning("Docker test run failed: %s", diagnostic)
+        return Result.fail(diagnostic)
     except Exception as exc:
         logger.warning("Docker test run failed: %s", exc)
         logger.debug("Full traceback:", exc_info=True)

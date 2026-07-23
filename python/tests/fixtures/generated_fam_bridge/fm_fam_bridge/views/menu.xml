@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_bridge_root" name="FMOS FAM Bridge"
+              sequence="90" groups="fm_fam_bridge.group_bridge_operator"/>
+<menuitem id="menu_bridge_records" name="Canonical Records"
+  parent="menu_bridge_root" action="action_bridge_records" sequence="10"/>
+    <menuitem id="menu_bridge_receipts" name="Action Receipts"
+              parent="menu_bridge_root" action="action_bridge_receipts" sequence="20"/>
+    <menuitem id="menu_bridge_outbox" name="Command Outbox"
+              parent="menu_bridge_root" action="action_bridge_outbox" sequence="30"/>
+</odoo>

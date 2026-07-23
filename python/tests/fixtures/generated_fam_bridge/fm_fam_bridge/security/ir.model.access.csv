@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_bridge_record_operator,bridge_record operator,model_fm_fam_asset,fm_fam_bridge.group_bridge_operator,1,0,0,0
+access_bridge_record_admin,bridge_record admin,model_fm_fam_asset,fm_fam_bridge.group_bridge_admin,1,0,0,0
+access_action_receipt_operator,action_receipt operator,model_fm_fam_action_receipt,fm_fam_bridge.group_bridge_operator,1,0,0,0
+access_action_receipt_admin,action_receipt admin,model_fm_fam_action_receipt,fm_fam_bridge.group_bridge_admin,1,0,0,0
+access_command_outbox_operator,command_outbox operator,model_fm_fam_command_outbox,fm_fam_bridge.group_bridge_operator,1,0,0,0
+access_command_outbox_admin,command_outbox admin,model_fm_fam_command_outbox,fm_fam_bridge.group_bridge_admin,1,0,0,0

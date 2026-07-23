@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0",
+  "module_name": "fm_fam_bridge",
+  "module_title": "FMOS FAM Bridge",
+  "version": "19.0.1.0.0",
+  "provider_contract_id": "fmos.fam.customer-library.v1",
+  "wrapper_contract_id": "fam.wrapper.v1",
+  "projection_contract_id": "fam.projection.v1",
+  "action_contract_id": "fam.action.v1",
+  "author": "Funk Media",
+  "license": "LGPL-3",
+  "bridge_mode": "fmos_authoritative",
+  "model_name": "fm.fam.asset",
+  "domain": "fam",
+  "fields": [
+    {
+      "name": "name",
+      "label": "Asset Name",
+      "field_type": "Char",
+      "required": true,
+      "index": true
+    },
+    {
+      "name": "asset_kind",
+      "label": "Asset Kind",
+      "field_type": "Char",
+      "required": true,
+      "index": true
+    },
+    {
+      "name": "status",
+      "label": "Status",
+      "field_type": "Char",
+      "required": true,
+      "index": true
+    },
+    {
+      "name": "metadata",
+      "label": "Metadata",
+      "field_type": "Json"
+    }
+  ],
+  "actions": [
+    {
+      "name": "request_download",
+      "label": "Request Download",
+      "command_type": "fam.download.requested.v1"
+    },
+    {
+      "name": "request_share",
+      "label": "Request Share",
+      "command_type": "fam.share.requested.v1"
+    },
+    {
+      "name": "archive",
+      "label": "Archive",
+      "command_type": "fam.archive.requested.v1"
+    }
+  ],
+  "max_attempts": 8,
+  "retry_base_seconds": 60,
+  "retry_cap_seconds": 3600,
+  "cron_batch_size": 100
+}

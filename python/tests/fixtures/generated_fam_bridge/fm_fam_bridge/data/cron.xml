@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="ir_cron_process_bridge_commands" model="ir.cron">
+        <field name="name">FMOS FAM Bridge: Process Commands</field>
+        <field name="model_id" ref="model_fm_fam_command_outbox"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_process_due_commands()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">minutes</field>
+        <field name="priority">5</field>
+        <field name="active" eval="True"/>
+    </record>
+</odoo>

@@ -1,0 +1,51 @@
+# Translation template for fm_fam_bridge.
+        msgid ""
+        msgstr ""
+        "Project-Id-Version: 19.0.1.0.0\n"
+        "Content-Type: text/plain; charset=UTF-8\n"
+        "Content-Transfer-Encoding: 8bit\n"
+
+        msgid 'Action Receipts'
+msgstr ""
+
+msgid 'Archive'
+msgstr ""
+
+msgid 'Asset Kind'
+msgstr ""
+
+msgid 'Asset Name'
+msgstr ""
+
+msgid 'Bridge Administrator'
+msgstr ""
+
+msgid 'Bridge Operator'
+msgstr ""
+
+msgid 'Canonical Records'
+msgstr ""
+
+msgid 'Command Outbox'
+msgstr ""
+
+msgid 'FMOS FAM Bridge'
+msgstr ""
+
+msgid 'Metadata'
+msgstr ""
+
+msgid 'Recover'
+msgstr ""
+
+msgid 'Request Download'
+msgstr ""
+
+msgid 'Request Reconciliation'
+msgstr ""
+
+msgid 'Request Share'
+msgstr ""
+
+msgid 'Status'
+msgstr ""

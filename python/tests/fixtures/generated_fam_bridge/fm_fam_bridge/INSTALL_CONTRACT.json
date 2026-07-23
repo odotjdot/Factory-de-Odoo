@@ -1,0 +1,142 @@
+{
+  "action_semantics": {
+    "concurrency": "transaction-scoped PostgreSQL advisory lock before idempotency search/create",
+    "expected_version": "required and equal to aggregate canonical_version",
+    "idempotency_identity": [
+      "company_id",
+      "idempotency_key"
+    ],
+    "ledger_rpc_crud": "read-only; fixed guarded methods own state transitions",
+    "semantic_fingerprint_material": [
+      "company_id",
+      "aggregate_record_id",
+      "aggregate_canonical_id",
+      "expected_canonical_version",
+      "aggregate_fingerprint",
+      "authority_scope",
+      "action",
+      "action_contract_id",
+      "command_type",
+      "payload"
+    ]
+  },
+  "aggregate_model": "fm.fam.asset",
+  "allowlisted_actions": {
+    "archive": "fam.archive.requested.v1",
+    "reconcile": "fam.reconcile.requested.v1",
+    "request_download": "fam.download.requested.v1",
+    "request_share": "fam.share.requested.v1"
+  },
+  "authoritative_writer": "fmos",
+  "authority_fields": [
+    "network_id",
+    "business_id",
+    "app_id",
+    "channel_id",
+    "identity_id",
+    "actor_id",
+    "company_id",
+    "install_id"
+  ],
+  "authority_semantics": {
+    "aggregate_identity": "all eight authority fields plus canonical_id",
+    "command_snapshot": "receipt and outbox preserve every authority field",
+    "company_isolation": "active Odoo company scope plus global company record rules",
+    "cross_scope_reassignment": "prohibited",
+    "fallbacks": false,
+    "required": true
+  },
+  "bridge_mode": "fmos_authoritative",
+  "contracts": {
+    "action": "fam.action.v1",
+    "projection": "fam.projection.v1",
+    "provider": "fmos.fam.customer-library.v1",
+    "wrapper": "fam.wrapper.v1"
+  },
+  "delivery_adapter": {
+    "guarantee": "the generated addon cannot deliver until an explicit adapter is installed",
+    "runtime_dispatch": false,
+    "seam": "deployment addon overrides the fixed _deliver_command method",
+    "status": "unbound"
+  },
+  "dependencies": [
+    "base"
+  ],
+  "directions": {
+    "fmos_to_odoo": "versioned projection into generated aggregate",
+    "odoo_to_fmos": "fixed action receipts and command outbox"
+  },
+  "extended_models": [],
+  "models": [
+    "fm.fam.asset",
+    "fm.fam.action.receipt",
+    "fm.fam.command.outbox"
+  ],
+  "module": "fm_fam_bridge",
+  "odoo_version": "19.0",
+  "outbox_model": "fm.fam.command.outbox",
+  "projection_fields": [
+    "name",
+    "asset_kind",
+    "status",
+    "metadata"
+  ],
+  "projection_semantics": {
+    "concurrency": "transaction-scoped PostgreSQL advisory lock over all authority fields and canonical_id",
+    "fingerprint_material": [
+      "authority_scope",
+      "canonical_id",
+      "canonical_version",
+      "values"
+    ],
+    "version": "monotonic; same version requires identical canonical fingerprint"
+  },
+  "provenance": {
+    "generator": "amil_utils.odoo_bridge",
+    "kind": "factory-generated",
+    "spec_sha256": "45b5a92fe3b3a283c454991e4d0f39b9f637a58883beb7b592ac58d6486781f1"
+  },
+  "receipt_model": "fm.fam.action.receipt",
+  "reconciliation": {
+    "observation_api": "apply_reconciliation_observation",
+    "persisted_fields": [
+      "reconciliation_state",
+      "source_version",
+      "destination_version",
+      "source_fingerprint",
+      "destination_fingerprint",
+      "last_reconciled_at",
+      "last_reconciliation_error_code",
+      "reconciliation_lag",
+      "reconciliation_retry_count",
+      "reconciliation_dead_letter_count"
+    ]
+  },
+  "retry_dead_letter_recovery": {
+    "claim": "atomic FOR UPDATE SKIP LOCKED claim",
+    "lease_fencing": "unguessable processing token plus row lock prevents stale worker transitions",
+    "lease_recovery": "expired processing rows are reclaimed atomically",
+    "max_attempts": 8,
+    "processing_lease_seconds": 900,
+    "recovery": "bridge administrator fixed action_recover method",
+    "retry_base_seconds": 60,
+    "retry_cap_seconds": 3600,
+    "terminal_next_attempt_at": null
+  },
+  "schema_version": "1.0",
+  "telemetry_fields": [
+    "correlation_id",
+    "causation_id",
+    "queued_at",
+    "last_attempt_at",
+    "processing_started_at",
+    "processing_lease_expires_at",
+    "processing_token",
+    "delivered_at",
+    "dead_lettered_at",
+    "dispatch_lag_seconds",
+    "attempts",
+    "last_error_code"
+  ],
+  "telemetry_pii": false
+}

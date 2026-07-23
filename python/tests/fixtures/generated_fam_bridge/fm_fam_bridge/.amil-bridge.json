@@ -1,0 +1,101 @@
+{
+  "files": [
+    {
+      "path": "INSTALL_CONTRACT.json",
+      "sha256": "6a57d05f77663b98d6f583f8e96d334eb5c765ee5789ba8527717bf4d2033958"
+    },
+    {
+      "path": "README.rst",
+      "sha256": "85fc377cc6b9781112000868035de358e6493b122874637edd1c9290de7ac6fe"
+    },
+    {
+      "path": "__init__.py",
+      "sha256": "bea45878180255932966162f20b4b156c34b0bd57bcc39efc4c9ca53c4503fde"
+    },
+    {
+      "path": "__manifest__.py",
+      "sha256": "a20c7016e4d24df171eafe43c92a942db35f129330104d74dd2ab5f52e25546a"
+    },
+    {
+      "path": "bridge-spec.json",
+      "sha256": "45b5a92fe3b3a283c454991e4d0f39b9f637a58883beb7b592ac58d6486781f1"
+    },
+    {
+      "path": "data/cron.xml",
+      "sha256": "46f181ed93733ec4a616fd4195d6734517d2bf4aa087976e4618ddf5f7e7d78e"
+    },
+    {
+      "path": "hooks.py",
+      "sha256": "ba8f1479ed1ad227d84c7648bdf8324c932c9eca9f721ee3c446aab214d20169"
+    },
+    {
+      "path": "i18n/fm_fam_bridge.pot",
+      "sha256": "fc02c5670433c40696f032611a86eb4130ffb6f654aae363b2ad7a1055c0d7f8"
+    },
+    {
+      "path": "migrations/19.0.1.0.0/post-migration.py",
+      "sha256": "dcf3e5ec4be29d411e6222f97550c85866072dbe64d9385a5ea8c97ddd2be53c"
+    },
+    {
+      "path": "migrations/19.0.1.0.0/pre-migration.py",
+      "sha256": "b23d7c786b42314ea603aff1f549a6df56808ca7a7accb594adc7eb2e85f621a"
+    },
+    {
+      "path": "models/__init__.py",
+      "sha256": "aec6adcb14eda0cba88d941506d28aad6b9c6cdb7f732f888687db52e373a8fd"
+    },
+    {
+      "path": "models/action_receipt.py",
+      "sha256": "f8d0e59715e2b7568ba277362f2ab76ff81a14d63d53c5c435db5a35bd26be19"
+    },
+    {
+      "path": "models/command_outbox.py",
+      "sha256": "cd7e0b5fd5ab4b7bf9cfebe9f4219c444a0f62bc7b88ca88c217a7e78400acc6"
+    },
+    {
+      "path": "models/fam_bridge.py",
+      "sha256": "8ef5504c2e587855e9af1ef2d5137da2a86aaa93d0bfc643be17f17f441c008d"
+    },
+    {
+      "path": "security/groups.xml",
+      "sha256": "cc4289accaf3e6c73b35bb48c08f27b0989f8cc1aa566c35acebcf4efe02f5cd"
+    },
+    {
+      "path": "security/ir.model.access.csv",
+      "sha256": "8bc652b272cdc2219fdb7c8ee1d138812e52cda335fe19cb8286d94fbc875bb9"
+    },
+    {
+      "path": "security/record_rules.xml",
+      "sha256": "eb7271a04d93c44cd1a05ef114c072d3db786041b836e1eace748547e9850dbb"
+    },
+    {
+      "path": "tests/__init__.py",
+      "sha256": "7e54312454b54de3d1008a063ee51e7f2b9a650a736cc84ccf8f8c520dedbc16"
+    },
+    {
+      "path": "tests/test_bridge.py",
+      "sha256": "3dfe6297a18bdf076cb3170cea00977137275d3f0f103b038568db317d80b726"
+    },
+    {
+      "path": "views/action_receipt_views.xml",
+      "sha256": "1275363c72bea9381b9eea7aea5a008c1dece20a61bf44823bb87133c2155bb8"
+    },
+    {
+      "path": "views/bridge_record_views.xml",
+      "sha256": "0650c231d0fd70a1f7e2acf3024ce38f3d4dfd9fc7ba62235fec21a0ea63e7d3"
+    },
+    {
+      "path": "views/command_outbox_views.xml",
+      "sha256": "4d920967856bad5b81d15f097420af12f34705f71729545ea6e2901e3bfc3bd1"
+    },
+    {
+      "path": "views/menu.xml",
+      "sha256": "70f4c5dfce5dd9272dc8d12d5e7a8f79fe98f827338ebabf7345d64fd0a82ebb"
+    }
+  ],
+  "generator": "amil_utils.odoo_bridge",
+  "module": "fm_fam_bridge",
+  "odoo_version": "19.0",
+  "schema_version": "1.0",
+  "spec_sha256": "45b5a92fe3b3a283c454991e4d0f39b9f637a58883beb7b592ac58d6486781f1"
+}

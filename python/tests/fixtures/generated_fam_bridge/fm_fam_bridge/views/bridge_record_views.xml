@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_bridge_record_list" model="ir.ui.view">
+        <field name="name">fm.fam.asset.bridge.list</field>
+        <field name="model">fm.fam.asset</field>
+        <field name="arch" type="xml">
+            <list create="0" delete="0">
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="install_id"/>
+                <field name="canonical_id"/>
+                <field name="canonical_version"/>
+                    <field name="name"/>
+            <field name="asset_kind"/>
+            <field name="status"/>
+            <field name="metadata"/>
+                <field name="origin"/>
+                <field name="reconciliation_state"/>
+                <field name="reconciliation_lag"/>
+                <field name="last_projection_at"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_bridge_record_form" model="ir.ui.view">
+        <field name="name">fm.fam.asset.bridge.form</field>
+        <field name="model">fm.fam.asset</field>
+        <field name="arch" type="xml">
+            <form create="0" delete="0">
+                <header>
+                    <button name="action_request_reconciliation" type="object"
+                            string="Request Reconciliation"
+                            groups="fm_fam_bridge.group_bridge_operator"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="network_id" readonly="1"/>
+                            <field name="business_id" readonly="1"/>
+                            <field name="app_id" readonly="1"/>
+                            <field name="channel_id" readonly="1"/>
+                            <field name="identity_id" readonly="1"/>
+                            <field name="actor_id" readonly="1"/>
+                            <field name="install_id" readonly="1"/>
+                            <field name="canonical_id" readonly="1"/>
+                            <field name="canonical_version" readonly="1"/>
+                            <field name="origin" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="fingerprint" readonly="1"/>
+                            <field name="correlation_id" readonly="1"/>
+                            <field name="causation_id" readonly="1"/>
+                            <field name="last_projection_at" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Reconciliation">
+                        <field name="reconciliation_state" readonly="1"/>
+                        <field name="source_version" readonly="1"/>
+                        <field name="destination_version" readonly="1"/>
+                        <field name="source_fingerprint" readonly="1"/>
+                        <field name="destination_fingerprint" readonly="1"/>
+                        <field name="last_reconciled_at" readonly="1"/>
+                        <field name="last_reconciliation_error_code" readonly="1"/>
+                        <field name="reconciliation_lag" readonly="1"/>
+                        <field name="reconciliation_retry_count" readonly="1"/>
+                        <field name="reconciliation_dead_letter_count" readonly="1"/>
+                    </group>
+                    <group string="Canonical Data">
+                        <field name="name"/>
+                <field name="asset_kind"/>
+                <field name="status"/>
+                <field name="metadata"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_bridge_records" model="ir.actions.act_window">
+        <field name="name">FMOS FAM Bridge</field>
+        <field name="res_model">fm.fam.asset</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>
