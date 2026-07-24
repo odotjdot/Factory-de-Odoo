@@ -21,7 +21,7 @@
   "preserved_files": [
     {"path": "README.rst", "sha256": "28b25c2a44128f2f737828183de87a656c87840ea5d1080f0f596ee5b87fdcc3"},
     {"path": "__init__.py", "sha256": "d17369c444e015d571143130d373bca0bdcdb534a4df07be1c4656dac3cacc85"},
-    {"path": "__manifest__.py", "sha256": "6a3495eac3a935adfc2a7125021958a3a86a49daa6fbaffe8c8f8dd7bdbaffac"},
+    {"path": "__manifest__.py", "sha256": "8d4d019268ffc1f90aa18e3a1715a756131d1eb7c68ccdac97778c567c37bde8"},
     {"path": "data/cron_data.xml", "sha256": "a490afe996932e2ed9c4f4aab4295c6dfa07423012576d48f73db4ffd3987149"},
     {"path": "data/data.xml", "sha256": "6a470974c97ad9a7d33fab46a8cd788a321b7f30419d58da8c140dcd5058fce1"},
     {"path": "data/sequences.xml", "sha256": "8ac7c59b27ddafa2810bed3c94ae70e6a3e666466710fc8eab6a0c18f0d4a02f"},
@@ -94,6 +94,6 @@
     "calendar_document"
   ],
   "service_model": "fm.appointment.customer.service",
-  "version": "19.0.2.0.0",
+  "version": "19.0.2.0.1",
   "wrapper_contract_id": "fmos.appointments.odoo-wrapper.v1"
 }
