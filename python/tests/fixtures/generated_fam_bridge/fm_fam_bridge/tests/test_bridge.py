@@ -8,7 +8,7 @@ from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests import TransactionCase, tagged
 
 
-@tagged("standard", "at_install")
+@tagged("post_install", "-at_install")
 class TestFamBridge(TransactionCase):
     @classmethod
     def setUpClass(cls):

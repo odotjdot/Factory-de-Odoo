@@ -445,7 +445,7 @@ def test_generated_odoo_tests_cover_runtime_contract(generated) -> None:
     assert "test_reconciliation_observation_is_persisted" in source
     assert "test_bridge_ledgers_are_read_only_over_rpc" in source
     assert "test_retry_dead_letter_and_recovery" in source
-    assert '@tagged("standard", "at_install")' in source
+    assert '@tagged("post_install", "-at_install")' in source
 
 
 def test_materializer_is_path_safe_and_refuses_unmanaged_overwrite(generated, tmp_path: Path) -> None:

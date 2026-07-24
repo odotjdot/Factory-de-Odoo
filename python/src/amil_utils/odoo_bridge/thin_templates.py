@@ -1402,7 +1402,7 @@ def _render_protocol_tests(spec: ThinBridgeSpec) -> str:
         from ..models import protocol
 
 
-        @tagged("standard", "at_install")
+        @tagged("post_install", "-at_install")
         class Test{_class_name(spec.protocol_model_prefix)}Protocol(TransactionCase):
             def test_protocol_registry_is_fixed(self):
                 {registration_assert}
@@ -1489,7 +1489,7 @@ def _render_projection_test_case(spec: ThinBridgeSpec, concept: ThinConceptSpec)
         from odoo.tests import TransactionCase, tagged
 
 
-        @tagged("standard", "at_install")
+        @tagged("post_install", "-at_install")
         class Test{_class_name(concept.name)}Projection(TransactionCase):
             @classmethod
             def setUpClass(cls):

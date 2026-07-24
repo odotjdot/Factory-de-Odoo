@@ -74,7 +74,7 @@
     },
     {
       "path": "tests/test_bridge.py",
-      "sha256": "3dfe6297a18bdf076cb3170cea00977137275d3f0f103b038568db317d80b726"
+      "sha256": "ec6e4db6118d7d7197b0ea456ccaa9ab2db0a33cd83403949f8f1481a640b834"
     },
     {
       "path": "views/action_receipt_views.xml",

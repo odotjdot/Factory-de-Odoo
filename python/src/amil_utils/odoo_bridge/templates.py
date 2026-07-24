@@ -2504,7 +2504,7 @@ def _render_odoo_tests(spec: BridgeSpec) -> str:
         from odoo.tests import TransactionCase, tagged
 
 
-        @tagged("standard", "at_install")
+        @tagged("post_install", "-at_install")
         class {class_name}(TransactionCase):
             @classmethod
             def setUpClass(cls):
@@ -2804,7 +2804,7 @@ def _render_native_odoo_tests(spec: BridgeSpec) -> str:
         from odoo.tests import TransactionCase, tagged
 
 
-        @tagged("standard", "at_install")
+        @tagged("post_install", "-at_install")
         class Test{_class_name(spec.domain)}NativeBridge(TransactionCase):
             @classmethod
             def setUpClass(cls):
