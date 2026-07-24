@@ -1,0 +1,106 @@
+{
+  "schema_version": "2.0",
+  "module_name": "fm_incpros_matters",
+  "module_title": "FMOS IncPros Matters",
+  "version": "19.0.1.1.0",
+  "author": "Funk Media",
+  "license": "LGPL-3",
+  "provider_contract_id": "fmos.incpros.customer.v1",
+  "wrapper_contract_id": "fmos.incpros.odoo-wrapper.v1",
+  "projection_contract_id": "fmos.bidirectional.projection.v1",
+  "action_contract_id": "fmos.bidirectional.odoo-command.v1",
+  "protocol_model_prefix": "fm.incpros",
+  "role": "projection",
+  "base_module": "fm_incpros_base",
+  "dependencies": [],
+  "concepts": [
+    {
+      "name": "matter",
+      "title": "IncPros Matter",
+      "model_name": "fm.incpros.matter",
+      "fields": [
+        {"name": "intake_canonical_id", "label": "Intake canonical ID", "field_type": "Char", "required": true, "index": true},
+        {"name": "entity_canonical_id", "label": "Entity canonical ID", "field_type": "Char", "required": false, "index": true},
+        {"name": "commerce_order_canonical_id", "label": "Commerce order canonical ID", "field_type": "Char", "required": true, "index": true},
+        {"name": "appointment_canonical_id", "label": "Appointment canonical ID", "field_type": "Char", "required": false, "index": true},
+        {"name": "product_code", "label": "Product code", "field_type": "Char", "required": true, "index": true},
+        {"name": "subproduct_code", "label": "Subproduct code", "field_type": "Char", "required": false, "index": true},
+        {"name": "venture_code", "label": "Business venture code", "field_type": "Char", "required": false, "index": true},
+        {"name": "vehicle_code", "label": "Acquisition vehicle code", "field_type": "Char", "required": false, "index": true},
+        {"name": "segment_type", "label": "Segment type", "field_type": "Char", "required": false, "index": true},
+        {"name": "route_code", "label": "Route code", "field_type": "Char", "required": false, "index": true},
+        {"name": "lifecycle_status", "label": "Matter status", "field_type": "Char", "required": true, "index": true},
+        {"name": "intake_status", "label": "Intake status", "field_type": "Char", "required": true, "index": true},
+        {"name": "payment_status", "label": "Payment status", "field_type": "Char", "required": true, "index": true},
+        {"name": "state_fee_status", "label": "State fee status", "field_type": "Char", "required": false, "index": true},
+        {"name": "review_status", "label": "Review status", "field_type": "Char", "required": false, "index": true},
+        {"name": "release_status", "label": "Release status", "field_type": "Char", "required": false, "index": true},
+        {"name": "provider_status", "label": "Provider status", "field_type": "Char", "required": false, "index": true},
+        {"name": "complexity_flag", "label": "Complexity flag", "field_type": "Boolean", "required": true, "index": true},
+        {"name": "test_mode", "label": "Test mode", "field_type": "Boolean", "required": true, "index": true},
+        {"name": "formation_state", "label": "Formation state", "field_type": "Char", "required": false, "index": true},
+        {"name": "formation_date", "label": "Formation date", "field_type": "Date", "required": false, "index": true},
+        {"name": "target_date", "label": "Target date", "field_type": "Date", "required": false, "index": true},
+        {"name": "submitted_at", "label": "Submitted at", "field_type": "Datetime", "required": false, "index": true},
+        {"name": "completed_at", "label": "Completed at", "field_type": "Datetime", "required": false, "index": true},
+        {"name": "created_at", "label": "Created at", "field_type": "Datetime", "required": true, "index": true},
+        {"name": "updated_at", "label": "Updated at", "field_type": "Datetime", "required": true, "index": true}
+      ],
+      "actions": [
+        {"name": "approve_submission", "label": "Approve submission", "command_type": "incpros.matter.approve-submission.requested.v1", "payload_fields": []},
+        {"name": "resume_after_info", "label": "Resume after information", "command_type": "incpros.matter.resume-after-info.requested.v1", "payload_fields": []},
+        {"name": "release_package", "label": "Release package", "command_type": "incpros.matter.release-package.requested.v1", "payload_fields": []},
+        {"name": "block_release", "label": "Block release", "command_type": "incpros.matter.block-release.requested.v1", "payload_fields": ["reason_code"]},
+        {"name": "complete_matter", "label": "Complete matter", "command_type": "incpros.matter.complete.requested.v1", "payload_fields": []},
+        {"name": "reconcile_financials", "label": "Reconcile financials", "command_type": "incpros.matter.reconcile-financials.requested.v1", "payload_fields": []}
+        ,
+        {"name": "update_status", "label": "Update matter status", "command_type": "incpros.matter.status-update.requested.v1", "payload_fields": ["target_status", "provider_code", "provider_reference"]},
+        {"name": "link_appointment", "label": "Link appointment", "command_type": "incpros.matter.appointment-link.requested.v1", "payload_fields": ["appointment_canonical_id"]}
+      ]
+    },
+    {
+      "name": "matter_event",
+      "title": "IncPros Matter Event",
+      "model_name": "fm.incpros.matter.event",
+      "fields": [
+        {"name": "matter_canonical_id", "label": "Matter canonical ID", "field_type": "Char", "required": true, "index": true},
+        {"name": "event_code", "label": "Event code", "field_type": "Char", "required": true, "index": true},
+        {"name": "lifecycle_status", "label": "Lifecycle status", "field_type": "Char", "required": true, "index": true},
+        {"name": "source_type", "label": "Source type", "field_type": "Char", "required": true, "index": true},
+        {"name": "source_reference", "label": "Source reference", "field_type": "Char", "required": false, "index": true},
+        {"name": "occurred_at", "label": "Occurred at", "field_type": "Datetime", "required": true, "index": true}
+      ],
+      "actions": []
+    },
+    {
+      "name": "matter_document",
+      "title": "IncPros Matter Document",
+      "model_name": "fm.incpros.matter.document",
+      "fields": [
+        {"name": "matter_canonical_id", "label": "Matter canonical ID", "field_type": "Char", "required": true, "index": true},
+        {"name": "entity_canonical_id", "label": "Entity canonical ID", "field_type": "Char", "required": false, "index": true},
+        {"name": "document_type", "label": "Document type", "field_type": "Char", "required": true, "index": true},
+        {"name": "lifecycle_status", "label": "Lifecycle status", "field_type": "Char", "required": true, "index": true},
+        {"name": "customer_visible", "label": "Customer visible", "field_type": "Boolean", "required": true, "index": true},
+        {"name": "checksum_sha256", "label": "SHA-256 checksum", "field_type": "Char", "required": false, "index": true},
+        {"name": "released_at", "label": "Released at", "field_type": "Datetime", "required": false, "index": true},
+        {"name": "viewed_at", "label": "Viewed at", "field_type": "Datetime", "required": false, "index": true},
+        {"name": "created_at", "label": "Created at", "field_type": "Datetime", "required": true, "index": true},
+        {"name": "updated_at", "label": "Updated at", "field_type": "Datetime", "required": true, "index": true}
+      ],
+      "actions": [
+        {
+          "name": "revoke_delivery",
+          "label": "Revoke document delivery",
+          "command_type": "incpros.matter.document.revoke.requested.v1",
+          "payload_fields": ["reason_code"]
+        }
+      ]
+    }
+  ],
+  "protocol_actions": [],
+  "max_attempts": 8,
+  "retry_base_seconds": 60,
+  "retry_cap_seconds": 3600,
+  "cron_batch_size": 100
+}

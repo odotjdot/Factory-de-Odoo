@@ -1,0 +1,57 @@
+{
+  "schema_version": "2.0",
+  "module_name": "fm_incpros_intakes",
+  "module_title": "FMOS IncPros Intakes",
+  "version": "19.0.1.1.0",
+  "author": "Funk Media",
+  "license": "LGPL-3",
+  "provider_contract_id": "fmos.incpros.customer.v1",
+  "wrapper_contract_id": "fmos.incpros.odoo-wrapper.v1",
+  "projection_contract_id": "fmos.bidirectional.projection.v1",
+  "action_contract_id": "fmos.bidirectional.odoo-command.v1",
+  "protocol_model_prefix": "fm.incpros",
+  "role": "projection",
+  "base_module": "fm_incpros_base",
+  "dependencies": [],
+  "concepts": [
+    {
+      "name": "intake",
+      "title": "IncPros Intake",
+      "model_name": "fm.incpros.intake",
+      "fields": [
+        {"name": "entity_form", "label": "Entity form", "field_type": "Char", "required": true, "index": true},
+        {"name": "service_family_code", "label": "Service family code", "field_type": "Char", "required": true, "index": true},
+        {"name": "catalog_version", "label": "Catalog version", "field_type": "Char", "required": true, "index": true},
+        {"name": "jurisdiction_code", "label": "Jurisdiction code", "field_type": "Char", "required": false, "index": true},
+        {"name": "lifecycle_status", "label": "Lifecycle status", "field_type": "Char", "required": true, "index": true},
+        {"name": "checkout_state", "label": "Checkout state", "field_type": "Char", "required": false, "index": true},
+        {"name": "commerce_order_canonical_id", "label": "Commerce order canonical ID", "field_type": "Char", "required": false, "index": true},
+        {"name": "matter_canonical_id", "label": "Matter canonical ID", "field_type": "Char", "required": false, "index": true},
+        {"name": "intake_version", "label": "Intake version", "field_type": "Integer", "required": true, "index": true},
+        {"name": "submitted_at", "label": "Submitted at", "field_type": "Datetime", "required": false, "index": true},
+        {"name": "converted_at", "label": "Converted at", "field_type": "Datetime", "required": false, "index": true},
+        {"name": "updated_at", "label": "Updated at", "field_type": "Datetime", "required": true, "index": true},
+        {"name": "created_at", "label": "Created at", "field_type": "Datetime", "required": true, "index": true}
+      ],
+      "actions": [
+        {
+          "name": "request_reconciliation",
+          "label": "Request reconciliation",
+          "command_type": "incpros.intake.reconcile.requested.v1",
+          "payload_fields": []
+        },
+        {
+          "name": "promote_purchase",
+          "label": "Promote purchased intake",
+          "command_type": "incpros.intake.promote-purchase.requested.v1",
+          "payload_fields": ["commerce_order_canonical_id"]
+        }
+      ]
+    }
+  ],
+  "protocol_actions": [],
+  "max_attempts": 8,
+  "retry_base_seconds": 60,
+  "retry_cap_seconds": 3600,
+  "cron_batch_size": 100
+}

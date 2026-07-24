@@ -1,0 +1,339 @@
+{
+  "schema_version": "2.0",
+  "module_name": "fm_ai_lab",
+  "module_title": "FMOS AI Lab",
+  "version": "19.0.1.0.0",
+  "author": "Funk Media",
+  "license": "LGPL-3",
+  "provider_contract_id": "fmos.ai-lab.operator.v1",
+  "wrapper_contract_id": "fmos.ai-lab.wrapper.v1",
+  "projection_contract_id": "fmos.bidirectional.projection.v1",
+  "action_contract_id": "fmos.bidirectional.odoo-command.v1",
+  "protocol_model_prefix": "fm.ai.lab",
+  "role": "standalone",
+  "base_module": null,
+  "dependencies": [],
+  "concepts": [
+    {
+      "name": "provider",
+      "title": "AI provider metadata",
+      "model_name": "fm.ai.lab.provider",
+      "fields": [
+        {"name": "provider_code", "label": "Provider code", "field_type": "Char", "required": true, "index": true},
+        {"name": "display_label", "label": "Display label", "field_type": "Char", "required": true, "index": true},
+        {"name": "allowed_model_count", "label": "Allowed model count", "field_type": "Integer", "required": true, "index": false},
+        {"name": "access_configured", "label": "Access configured", "field_type": "Boolean", "required": true, "index": false},
+        {"name": "endpoint_configured", "label": "Endpoint configured", "field_type": "Boolean", "required": true, "index": false},
+        {"name": "is_enabled", "label": "Enabled", "field_type": "Boolean", "required": true, "index": true},
+        {"name": "config_version", "label": "Configuration version", "field_type": "Integer", "required": true, "index": false},
+        {"name": "last_updated_at", "label": "Last updated", "field_type": "Datetime", "required": true, "index": false}
+      ],
+      "actions": [
+        {
+          "name": "update_provider",
+          "label": "Update provider controls",
+          "command_type": "ai-lab.provider.update.requested.v1",
+          "payload_fields": ["allowed_models", "is_enabled"]
+        }
+      ]
+    },
+    {
+      "name": "instruction",
+      "title": "AI instruction version",
+      "model_name": "fm.ai.lab.instruction",
+      "fields": [
+        {"name": "slug", "label": "Slug", "field_type": "Char", "required": true, "index": true},
+        {"name": "display_label", "label": "Display label", "field_type": "Char", "required": true, "index": true},
+        {"name": "revision", "label": "Revision", "field_type": "Integer", "required": true, "index": true},
+        {"name": "lifecycle_status", "label": "Lifecycle status", "field_type": "Char", "required": true, "index": true},
+        {"name": "content_hash", "label": "Content hash", "field_type": "Char", "required": true, "index": true},
+        {"name": "supersedes_canonical_id", "label": "Supersedes canonical ID", "field_type": "Char", "required": false, "index": true},
+        {"name": "recorded_at", "label": "Recorded at", "field_type": "Datetime", "required": true, "index": false}
+      ],
+      "actions": []
+    },
+    {
+      "name": "eval_prompt",
+      "title": "AI evaluation prompt version",
+      "model_name": "fm.ai.lab.eval.prompt",
+      "fields": [
+        {"name": "slug", "label": "Slug", "field_type": "Char", "required": true, "index": true},
+        {"name": "display_label", "label": "Display label", "field_type": "Char", "required": true, "index": true},
+        {"name": "revision", "label": "Revision", "field_type": "Integer", "required": true, "index": true},
+        {"name": "lifecycle_status", "label": "Lifecycle status", "field_type": "Char", "required": true, "index": true},
+        {"name": "content_hash", "label": "Content hash", "field_type": "Char", "required": true, "index": true},
+        {"name": "supersedes_canonical_id", "label": "Supersedes canonical ID", "field_type": "Char", "required": false, "index": true},
+        {"name": "recorded_at", "label": "Recorded at", "field_type": "Datetime", "required": true, "index": false}
+      ],
+      "actions": [
+        {
+          "name": "queue_eval_run",
+          "label": "Queue evaluation run",
+          "command_type": "ai-lab.eval-run.queue.requested.v1",
+          "payload_fields": ["instruction_set_id", "corpus_id", "model_selections", "temperature", "retrieval_limit"]
+        }
+      ]
+    },
+    {
+      "name": "corpus",
+      "title": "AI corpus",
+      "model_name": "fm.ai.lab.corpus",
+      "fields": [
+        {"name": "slug", "label": "Slug", "field_type": "Char", "required": true, "index": true},
+        {"name": "display_label", "label": "Display label", "field_type": "Char", "required": true, "index": true},
+        {"name": "embedding_provider_code", "label": "Embedding provider", "field_type": "Char", "required": true, "index": true},
+        {"name": "embedding_model_id", "label": "Embedding model", "field_type": "Char", "required": true, "index": true},
+        {"name": "embedding_version", "label": "Embedding version", "field_type": "Integer", "required": true, "index": false},
+        {"name": "chunk_size", "label": "Chunk size", "field_type": "Integer", "required": true, "index": false},
+        {"name": "chunk_overlap", "label": "Chunk overlap", "field_type": "Integer", "required": true, "index": false},
+        {"name": "is_enabled", "label": "Enabled", "field_type": "Boolean", "required": true, "index": true},
+        {"name": "document_count", "label": "Document count", "field_type": "Integer", "required": true, "index": false},
+        {"name": "chunk_count", "label": "Chunk count", "field_type": "Integer", "required": true, "index": false},
+        {"name": "last_updated_at", "label": "Last updated", "field_type": "Datetime", "required": true, "index": false}
+      ],
+      "actions": [
+        {
+          "name": "queue_reembed",
+          "label": "Queue corpus re-embedding",
+          "command_type": "ai-lab.corpus.reembed.requested.v1",
+          "payload_fields": ["embedding_provider_code", "embedding_model_id"]
+        }
+      ]
+    },
+    {
+      "name": "eval_run",
+      "title": "AI evaluation run",
+      "model_name": "fm.ai.lab.eval.run",
+      "fields": [
+        {"name": "eval_prompt_canonical_id", "label": "Evaluation prompt canonical ID", "field_type": "Char", "required": true, "index": true},
+        {"name": "instruction_canonical_id", "label": "Instruction canonical ID", "field_type": "Char", "required": true, "index": true},
+        {"name": "corpus_canonical_id", "label": "Corpus canonical ID", "field_type": "Char", "required": false, "index": true},
+        {"name": "run_status", "label": "Run status", "field_type": "Char", "required": true, "index": true},
+        {"name": "temperature", "label": "Temperature", "field_type": "Float", "required": true, "index": false},
+        {"name": "retrieval_limit", "label": "Retrieval limit", "field_type": "Integer", "required": true, "index": false},
+        {"name": "model_selection_count", "label": "Model selection count", "field_type": "Integer", "required": true, "index": false},
+        {"name": "expected_output_count", "label": "Expected output count", "field_type": "Integer", "required": true, "index": false},
+        {"name": "completed_output_count", "label": "Completed output count", "field_type": "Integer", "required": true, "index": false},
+        {"name": "total_input_tokens", "label": "Total input tokens", "field_type": "Integer", "required": true, "index": false},
+        {"name": "total_output_tokens", "label": "Total output tokens", "field_type": "Integer", "required": true, "index": false},
+        {"name": "total_cost_microusd", "label": "Total cost micro USD", "field_type": "Integer", "required": true, "index": false},
+        {"name": "started_at", "label": "Started at", "field_type": "Datetime", "required": false, "index": false},
+        {"name": "completed_at", "label": "Completed at", "field_type": "Datetime", "required": false, "index": false},
+        {"name": "recorded_at", "label": "Recorded at", "field_type": "Datetime", "required": true, "index": false}
+      ],
+      "actions": []
+    },
+    {
+      "name": "eval_output",
+      "title": "AI evaluation output metadata",
+      "model_name": "fm.ai.lab.eval.output",
+      "fields": [
+        {"name": "run_canonical_id", "label": "Run canonical ID", "field_type": "Char", "required": true, "index": true},
+        {"name": "provider_code", "label": "Provider code", "field_type": "Char", "required": true, "index": true},
+        {"name": "model_id", "label": "Model ID", "field_type": "Char", "required": true, "index": true},
+        {"name": "result_status", "label": "Result status", "field_type": "Char", "required": true, "index": true},
+        {"name": "error_code", "label": "Error code", "field_type": "Char", "required": false, "index": true},
+        {"name": "latency_ms", "label": "Latency milliseconds", "field_type": "Integer", "required": false, "index": false},
+        {"name": "input_tokens", "label": "Input tokens", "field_type": "Integer", "required": false, "index": false},
+        {"name": "output_tokens", "label": "Output tokens", "field_type": "Integer", "required": false, "index": false},
+        {"name": "cost_microusd", "label": "Cost micro USD", "field_type": "Integer", "required": false, "index": false},
+        {"name": "human_score", "label": "Human score", "field_type": "Integer", "required": false, "index": false},
+        {"name": "verification_source_canonical_id", "label": "Verification source canonical ID", "field_type": "Char", "required": false, "index": true},
+        {"name": "recorded_at", "label": "Recorded at", "field_type": "Datetime", "required": true, "index": false}
+      ],
+      "actions": [
+        {
+          "name": "score_output",
+          "label": "Score output",
+          "command_type": "ai-lab.eval-output.score.requested.v1",
+          "payload_fields": ["human_score", "rubric_scores"]
+        },
+        {
+          "name": "verify_output",
+          "label": "Verify output directly",
+          "command_type": "ai-lab.eval-output.verify.requested.v1",
+          "payload_fields": ["direct_provider_id", "direct_model_id"]
+        },
+        {
+          "name": "promote_output",
+          "label": "Promote output",
+          "command_type": "ai-lab.eval-output.promote.requested.v1",
+          "payload_fields": ["consumer_role", "promotion_reason", "per_request_cost_cap_usd", "max_output_tokens"]
+        }
+      ]
+    },
+    {
+      "name": "active_config",
+      "title": "AI active configuration",
+      "model_name": "fm.ai.lab.active.config",
+      "fields": [
+        {"name": "consumer_role", "label": "Consumer role", "field_type": "Char", "required": true, "index": true},
+        {"name": "revision", "label": "Revision", "field_type": "Integer", "required": true, "index": true},
+        {"name": "provider_code", "label": "Provider code", "field_type": "Char", "required": true, "index": true},
+        {"name": "model_id", "label": "Model ID", "field_type": "Char", "required": true, "index": true},
+        {"name": "instruction_canonical_id", "label": "Instruction canonical ID", "field_type": "Char", "required": true, "index": true},
+        {"name": "corpus_canonical_id", "label": "Corpus canonical ID", "field_type": "Char", "required": false, "index": true},
+        {"name": "temperature", "label": "Temperature", "field_type": "Float", "required": true, "index": false},
+        {"name": "max_output_tokens", "label": "Maximum output tokens", "field_type": "Integer", "required": true, "index": false},
+        {"name": "per_request_cost_cap_microusd", "label": "Per-request cost cap micro USD", "field_type": "Integer", "required": true, "index": false},
+        {"name": "is_active", "label": "Active", "field_type": "Boolean", "required": true, "index": true},
+        {"name": "promoted_at", "label": "Promoted at", "field_type": "Datetime", "required": true, "index": false},
+        {"name": "retired_at", "label": "Retired at", "field_type": "Datetime", "required": false, "index": false}
+      ],
+      "actions": []
+    },
+    {
+      "name": "job",
+      "title": "AI Lab job",
+      "model_name": "fm.ai.lab.job",
+      "fields": [
+        {"name": "job_type", "label": "Job type", "field_type": "Char", "required": true, "index": true},
+        {"name": "corpus_canonical_id", "label": "Corpus canonical ID", "field_type": "Char", "required": false, "index": true},
+        {"name": "job_status", "label": "Job status", "field_type": "Char", "required": true, "index": true},
+        {"name": "progress_items_done", "label": "Progress items done", "field_type": "Integer", "required": true, "index": false},
+        {"name": "progress_items_total", "label": "Progress items total", "field_type": "Integer", "required": true, "index": false},
+        {"name": "attempts", "label": "Attempts", "field_type": "Integer", "required": true, "index": false},
+        {"name": "last_error_code", "label": "Last error code", "field_type": "Char", "required": false, "index": true},
+        {"name": "started_at", "label": "Started at", "field_type": "Datetime", "required": false, "index": false},
+        {"name": "completed_at", "label": "Completed at", "field_type": "Datetime", "required": false, "index": false},
+        {"name": "recorded_at", "label": "Recorded at", "field_type": "Datetime", "required": true, "index": false}
+      ],
+      "actions": [
+        {
+          "name": "run_job",
+          "label": "Run job",
+          "command_type": "ai-lab.job.run.requested.v1",
+          "payload_fields": []
+        }
+      ]
+    },
+    {
+      "name": "usage",
+      "title": "AI usage summary",
+      "model_name": "fm.ai.lab.usage",
+      "fields": [
+        {"name": "period_key", "label": "Period key", "field_type": "Char", "required": true, "index": true},
+        {"name": "provider_code", "label": "Provider code", "field_type": "Char", "required": true, "index": true},
+        {"name": "model_id", "label": "Model ID", "field_type": "Char", "required": true, "index": true},
+        {"name": "consumer_role", "label": "Consumer role", "field_type": "Char", "required": true, "index": true},
+        {"name": "request_count", "label": "Request count", "field_type": "Integer", "required": true, "index": false},
+        {"name": "input_tokens", "label": "Input tokens", "field_type": "Integer", "required": true, "index": false},
+        {"name": "output_tokens", "label": "Output tokens", "field_type": "Integer", "required": true, "index": false},
+        {"name": "cost_microusd", "label": "Cost micro USD", "field_type": "Integer", "required": true, "index": false},
+        {"name": "average_latency_ms", "label": "Average latency milliseconds", "field_type": "Integer", "required": true, "index": false}
+      ],
+      "actions": []
+    },
+    {
+      "name": "budget_control",
+      "title": "AI budget control",
+      "model_name": "fm.ai.lab.budget.control",
+      "fields": [
+        {"name": "daily_cost_cap_microusd", "label": "Daily cost cap micro USD", "field_type": "Integer", "required": true, "index": false},
+        {"name": "monthly_cost_cap_microusd", "label": "Monthly cost cap micro USD", "field_type": "Integer", "required": true, "index": false},
+        {"name": "max_models_per_eval", "label": "Maximum models per evaluation", "field_type": "Integer", "required": true, "index": false},
+        {"name": "allowed_provider_count", "label": "Allowed provider count", "field_type": "Integer", "required": true, "index": false},
+        {"name": "blocked_pattern_count", "label": "Blocked pattern count", "field_type": "Integer", "required": true, "index": false},
+        {"name": "last_updated_at", "label": "Last updated", "field_type": "Datetime", "required": true, "index": false}
+      ],
+      "actions": [
+        {
+          "name": "update_budget_controls",
+          "label": "Update budget controls",
+          "command_type": "ai-lab.model-controls.update.requested.v1",
+          "payload_fields": ["daily_cost_cap_usd", "monthly_cost_cap_usd", "max_models_per_eval", "allowed_provider_codes", "blocked_model_patterns", "model_rates"]
+        }
+      ]
+    },
+    {
+      "name": "model_rate",
+      "title": "AI model rate",
+      "model_name": "fm.ai.lab.model.rate",
+      "fields": [
+        {"name": "provider_code", "label": "Provider code", "field_type": "Char", "required": true, "index": true},
+        {"name": "model_id", "label": "Model ID", "field_type": "Char", "required": true, "index": true},
+        {"name": "input_microusd_per_million_tokens", "label": "Input micro USD per million tokens", "field_type": "Integer", "required": true, "index": false},
+        {"name": "output_microusd_per_million_tokens", "label": "Output micro USD per million tokens", "field_type": "Integer", "required": true, "index": false},
+        {"name": "effective_at", "label": "Effective at", "field_type": "Datetime", "required": true, "index": true},
+        {"name": "last_updated_at", "label": "Last updated", "field_type": "Datetime", "required": true, "index": false}
+      ],
+      "actions": []
+    },
+    {
+      "name": "audit_receipt",
+      "title": "AI Lab audit receipt",
+      "model_name": "fm.ai.lab.audit.receipt",
+      "fields": [
+        {"name": "action_code", "label": "Action code", "field_type": "Char", "required": true, "index": true},
+        {"name": "subject_type", "label": "Subject type", "field_type": "Char", "required": true, "index": true},
+        {"name": "subject_canonical_id", "label": "Subject canonical ID", "field_type": "Char", "required": false, "index": true},
+        {"name": "event_correlation_id", "label": "Event correlation ID", "field_type": "Char", "required": false, "index": true},
+        {"name": "state_fingerprint", "label": "State fingerprint", "field_type": "Char", "required": true, "index": true},
+        {"name": "recorded_at", "label": "Recorded at", "field_type": "Datetime", "required": true, "index": true}
+      ],
+      "actions": []
+    }
+  ],
+  "protocol_actions": [
+    {
+      "aggregate_model": "fm.ai.lab.provider",
+      "name": "update_provider",
+      "label": "Update provider controls",
+      "command_type": "ai-lab.provider.update.requested.v1",
+      "payload_fields": ["allowed_models", "is_enabled"]
+    },
+    {
+      "aggregate_model": "fm.ai.lab.eval.prompt",
+      "name": "queue_eval_run",
+      "label": "Queue evaluation run",
+      "command_type": "ai-lab.eval-run.queue.requested.v1",
+      "payload_fields": ["instruction_set_id", "corpus_id", "model_selections", "temperature", "retrieval_limit"]
+    },
+    {
+      "aggregate_model": "fm.ai.lab.corpus",
+      "name": "queue_reembed",
+      "label": "Queue corpus re-embedding",
+      "command_type": "ai-lab.corpus.reembed.requested.v1",
+      "payload_fields": ["embedding_provider_code", "embedding_model_id"]
+    },
+    {
+      "aggregate_model": "fm.ai.lab.eval.output",
+      "name": "score_output",
+      "label": "Score output",
+      "command_type": "ai-lab.eval-output.score.requested.v1",
+      "payload_fields": ["human_score", "rubric_scores"]
+    },
+    {
+      "aggregate_model": "fm.ai.lab.eval.output",
+      "name": "verify_output",
+      "label": "Verify output directly",
+      "command_type": "ai-lab.eval-output.verify.requested.v1",
+      "payload_fields": ["direct_provider_id", "direct_model_id"]
+    },
+    {
+      "aggregate_model": "fm.ai.lab.eval.output",
+      "name": "promote_output",
+      "label": "Promote output",
+      "command_type": "ai-lab.eval-output.promote.requested.v1",
+      "payload_fields": ["consumer_role", "promotion_reason", "per_request_cost_cap_usd", "max_output_tokens"]
+    },
+    {
+      "aggregate_model": "fm.ai.lab.job",
+      "name": "run_job",
+      "label": "Run job",
+      "command_type": "ai-lab.job.run.requested.v1",
+      "payload_fields": []
+    },
+    {
+      "aggregate_model": "fm.ai.lab.budget.control",
+      "name": "update_budget_controls",
+      "label": "Update budget controls",
+      "command_type": "ai-lab.model-controls.update.requested.v1",
+      "payload_fields": ["daily_cost_cap_usd", "monthly_cost_cap_usd", "max_models_per_eval", "allowed_provider_codes", "blocked_model_patterns", "model_rates"]
+    }
+  ],
+  "max_attempts": 8,
+  "retry_base_seconds": 60,
+  "retry_cap_seconds": 3600,
+  "cron_batch_size": 100
+}

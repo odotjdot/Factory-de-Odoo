@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "module_name": "fmos_headless_portal_loyalty",
+  "module_title": "FMOS Headless Portal - Loyalty",
+  "version": "19.0.2.0.0",
+  "author": "Funk Media",
+  "license": "LGPL-3",
+  "provider_contract_id": "odoo.loyalty-customer.v1",
+  "wrapper_contract_id": "fmos.headless-portal-loyalty.wrapper.v1",
+  "aggregate_model": "loyalty.card",
+  "models": [
+    "loyalty.card",
+    "loyalty.history",
+    "loyalty.program",
+    "loyalty.reward"
+  ],
+  "dependencies": [
+    "fmos_headless_portal",
+    "loyalty"
+  ],
+  "preserved_files": [
+    {
+      "path": "__init__.py",
+      "sha256": "9fe3d817af3527a5eb36697e67ffabea60fb663dcc07e8f9f0e9785bbc87d222"
+    },
+    {
+      "path": "__manifest__.py",
+      "sha256": "0d313989c5d87ee6c6acecb753337bdadc162a7294845b13772b7403ae155368"
+    },
+    {
+      "path": "models/__init__.py",
+      "sha256": "c3485bf1ebd611a8002d3cb0a4cdd971bc9ee48ef40a9ff7323aa83f8759e010"
+    },
+    {
+      "path": "models/loyalty_registry.py",
+      "sha256": "c65ae8356b4e88de53a4193076f31dbce6ba6246cd799aa5a45e3a371069cd87"
+    }
+  ]
+}

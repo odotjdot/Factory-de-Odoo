@@ -1,0 +1,121 @@
+{
+  "schema_version": "2.0",
+  "module_name": "fm_incpros_base",
+  "module_title": "FMOS IncPros Protocol",
+  "version": "19.0.1.1.0",
+  "author": "Funk Media",
+  "license": "LGPL-3",
+  "provider_contract_id": "fmos.incpros.customer.v1",
+  "wrapper_contract_id": "fmos.incpros.odoo-wrapper.v1",
+  "projection_contract_id": "fmos.bidirectional.projection.v1",
+  "action_contract_id": "fmos.bidirectional.odoo-command.v1",
+  "protocol_model_prefix": "fm.incpros",
+  "role": "protocol_base",
+  "base_module": null,
+  "dependencies": [],
+  "concepts": [],
+  "protocol_actions": [
+    {
+      "aggregate_model": "fm.incpros.entity",
+      "name": "transition",
+      "label": "Request entity transition",
+      "command_type": "incpros.entity.transition.requested.v1",
+      "payload_fields": ["target_status", "reason_code"]
+    },
+    {
+      "aggregate_model": "fm.incpros.intake",
+      "name": "request_reconciliation",
+      "label": "Request reconciliation",
+      "command_type": "incpros.intake.reconcile.requested.v1",
+      "payload_fields": []
+    },
+    {
+      "aggregate_model": "fm.incpros.intake",
+      "name": "promote_purchase",
+      "label": "Promote purchased intake",
+      "command_type": "incpros.intake.promote-purchase.requested.v1",
+      "payload_fields": ["commerce_order_canonical_id"]
+    },
+    {
+      "aggregate_model": "fm.incpros.matter",
+      "name": "approve_submission",
+      "label": "Approve submission",
+      "command_type": "incpros.matter.approve-submission.requested.v1",
+      "payload_fields": []
+    },
+    {
+      "aggregate_model": "fm.incpros.matter",
+      "name": "resume_after_info",
+      "label": "Resume after information",
+      "command_type": "incpros.matter.resume-after-info.requested.v1",
+      "payload_fields": []
+    },
+    {
+      "aggregate_model": "fm.incpros.matter",
+      "name": "release_package",
+      "label": "Release package",
+      "command_type": "incpros.matter.release-package.requested.v1",
+      "payload_fields": []
+    },
+    {
+      "aggregate_model": "fm.incpros.matter",
+      "name": "block_release",
+      "label": "Block release",
+      "command_type": "incpros.matter.block-release.requested.v1",
+      "payload_fields": ["reason_code"]
+    },
+    {
+      "aggregate_model": "fm.incpros.matter",
+      "name": "complete_matter",
+      "label": "Complete matter",
+      "command_type": "incpros.matter.complete.requested.v1",
+      "payload_fields": []
+    },
+    {
+      "aggregate_model": "fm.incpros.matter",
+      "name": "reconcile_financials",
+      "label": "Reconcile financials",
+      "command_type": "incpros.matter.reconcile-financials.requested.v1",
+      "payload_fields": []
+    },
+    {
+      "aggregate_model": "fm.incpros.matter",
+      "name": "update_status",
+      "label": "Update matter status",
+      "command_type": "incpros.matter.status-update.requested.v1",
+      "payload_fields": ["target_status", "provider_code", "provider_reference"]
+    },
+    {
+      "aggregate_model": "fm.incpros.matter",
+      "name": "link_appointment",
+      "label": "Link appointment",
+      "command_type": "incpros.matter.appointment-link.requested.v1",
+      "payload_fields": ["appointment_canonical_id"]
+    },
+    {
+      "aggregate_model": "fm.incpros.matter.document",
+      "name": "revoke_delivery",
+      "label": "Revoke document delivery",
+      "command_type": "incpros.matter.document.revoke.requested.v1",
+      "payload_fields": ["reason_code"]
+    },
+    {
+      "aggregate_model": "fm.incpros.compliance.obligation",
+      "name": "upsert_obligation",
+      "label": "Update compliance obligation",
+      "command_type": "incpros.compliance.obligation.upsert.requested.v1",
+      "payload_fields": [
+        "obligation_type",
+        "due_date",
+        "lifecycle_status",
+        "recurrence_rule",
+        "source_code",
+        "source_reference"
+      ]
+    }
+  ],
+  "max_attempts": 8,
+  "retry_base_seconds": 60,
+  "retry_cap_seconds": 3600,
+  "cron_batch_size": 100
+}
