@@ -94,6 +94,6 @@
     "calendar_document"
   ],
   "service_model": "fm.appointment.customer.service",
-  "version": "19.0.1.1.0",
+  "version": "19.0.2.0.0",
   "wrapper_contract_id": "fmos.appointments.odoo-wrapper.v1"
 }
