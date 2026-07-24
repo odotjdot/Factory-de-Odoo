@@ -55,6 +55,7 @@ def test_ai_lab_wrapper_projects_exact_operator_metadata_and_actions() -> None:
         "fm.ai.lab.action.receipt",
         "fm.ai.lab.command.outbox",
     }
+    assert contract["models"] == sorted(set(contract["models"]))
     for forbidden in (
         "secret_ref",
         "system_prompt",

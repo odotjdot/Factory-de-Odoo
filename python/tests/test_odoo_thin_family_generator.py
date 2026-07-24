@@ -126,10 +126,10 @@ def test_protocol_base_generates_shared_crosswalk_receipts_outbox_and_recovery()
 
     assert manifest["depends"] == ["base", "mail"]
     assert contract["models"] == [
-        "fm.incpros.crosswalk",
-        "fm.incpros.projection.receipt",
         "fm.incpros.action.receipt",
         "fm.incpros.command.outbox",
+        "fm.incpros.crosswalk",
+        "fm.incpros.projection.receipt",
     ]
     assert contract["authority_fields"] == [
         "network_id",
@@ -236,14 +236,14 @@ def test_standalone_addon_can_own_protocol_for_multiple_concepts() -> None:
     }
     generated = render_thin_bridge_addon(raw)
     contract = json.loads(generated.file_map()["INSTALL_CONTRACT.json"])
-    assert contract["models"] == [
+    assert contract["models"] == sorted([
         "fm.hub.flex.profile",
         "fm.hub.flex.earning",
         "fm.hub.flex.crosswalk",
         "fm.hub.flex.projection.receipt",
         "fm.hub.flex.action.receipt",
         "fm.hub.flex.command.outbox",
-    ]
+    ])
 
 
 @pytest.mark.parametrize(
@@ -362,7 +362,7 @@ def test_incpros_family_owns_exact_bounded_context_models_and_no_incgpt_copy() -
         receipt = json.loads(files[".amil-bridge.json"])
         manifest = ast.literal_eval(files["__manifest__.py"].decode())
 
-        assert contract["models"] == EXPECTED_INCPROS_MODELS[module]
+        assert contract["models"] == sorted(EXPECTED_INCPROS_MODELS[module])
         assert set(contract["authority_fields"]) == {
             "network_id",
             "business_id",

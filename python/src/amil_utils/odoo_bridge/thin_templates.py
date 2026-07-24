@@ -1617,7 +1617,7 @@ def _render_install_contract(spec: ThinBridgeSpec) -> str:
         "bridge_mode": "fmos_authoritative",
         "authoritative_writer": "fmos",
         "aggregate_model": aggregate_model,
-        "models": [*concept_models, *owned_protocol_models],
+        "models": sorted({*concept_models, *owned_protocol_models}),
         "dependencies": _dependencies(spec),
         "contracts": {
             "provider": spec.provider_contract_id,
