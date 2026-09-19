@@ -979,9 +979,7 @@ def _render_protocol(spec: ThinBridgeSpec) -> str:
                         break
 
             def action_recover(self):
-                group_xmlid = {f"{spec.module_name}.group_bridge_admin"!r}
-                if {spec.role == "projection"!r}:
-                    group_xmlid = {f"{spec.base_module}.group_bridge_admin"!r}
+                group_xmlid = {_group_xmlids(spec)[1]!r}
                 if not self.env.user.has_group(group_xmlid):
                     raise UserError(self.env._("Bridge administrator access is required."))
                 self.filtered(lambda row: row.state == "dead_letter").sudo().write(
