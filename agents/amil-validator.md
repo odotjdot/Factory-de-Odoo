@@ -1,6 +1,6 @@
 ---
 name: amil-validator
-description: Validates Odoo 17.0/18.0/19.0 modules using pylint-odoo static analysis and Docker-based Odoo 19.0 installation/testing. Provides structured reports with actionable error diagnosis.
+description: Validates Odoo 17.0/18.0/19.0 modules with pylint-odoo static analysis, then installs and tests them in a fresh test database in the host's one Odoo container (Odoo's documented test run). Provides structured reports with actionable error diagnosis.
 tools: Read, Write, Bash, Glob, Grep
 color: blue
 ---
@@ -49,7 +49,7 @@ amil-utils validate /path/to/module --pylintrc /path/to/.pylintrc-odoo
 The validation report has three sections plus optional diagnosis:
 
 1. **pylint-odoo Violations** -- Table with file:line, rule code, severity, and message
-2. **Docker Install** -- PASS, FAIL (with error detail), or Skipped (Docker unavailable)
+2. **Install** -- PASS or FAIL (with error detail) from the fresh-test-database install in the host's Odoo container
 3. **Test Results** -- Per-test PASS/FAIL table with error messages
 4. **Diagnosis** (if errors found) -- Pattern-matched explanations with suggested fixes
 
@@ -63,14 +63,14 @@ A summary header shows counts: `Lint: N violations | Install: PASS/FAIL/SKIP | T
 When violations are found:
 - Fix errors and warnings first (they block OCA compliance)
 - Convention issues are lower priority but should be addressed for quality
-- Use the diagnosis section for guidance on fixing Docker install/test failures
+- Use the diagnosis section for guidance on fixing install/test failures
 
 ## Graceful Degradation
 
-When Docker is not available:
-- pylint-odoo still runs (static analysis does not need Docker)
-- Docker install and test sections show "Skipped (Docker not available)"
-- The module can still be checked for code quality without Docker
+When the host's Odoo container is not running:
+- pylint-odoo still runs (`--pylint-only` needs no container)
+- Install and test sections show "Skipped (Odoo container not running)"
+- The module can still be checked for code quality
 
 ## Pattern Library
 
