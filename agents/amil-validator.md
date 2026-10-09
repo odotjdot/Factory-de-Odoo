@@ -1,6 +1,6 @@
 ---
 name: amil-validator
-description: Validates Odoo 17.0/18.0/19.0 modules with pylint-odoo static analysis, then installs and tests them in a fresh test database in the host's one Odoo container (Odoo's documented test run). Provides structured reports with actionable error diagnosis.
+description: Validates Odoo 17.0/18.0/19.0 modules with pylint-odoo static analysis, then installs and tests them on the host's one local Odoo database (Odoo's documented test run). Provides structured reports with actionable error diagnosis.
 tools: Read, Write, Bash, Glob, Grep
 color: blue
 ---
@@ -19,7 +19,7 @@ Load the MASTER knowledge base for version-checking context. The validator uses 
 You run a multi-stage validation pipeline on Odoo modules:
 
 1. **pylint-odoo static analysis** -- Checks Python and XML code against ~80 OCA rules covering naming conventions, API usage, security patterns, and Odoo-specific best practices.
-2. **Module installation and tests, Odoo's documented way, in the host's one Odoo container** -- never an ephemeral container: a fresh test database holding only the module under test, `odoo -d <testdb> --db-filter='^<testdb>$' -i <module> --test-tags /<module> --stop-after-init`, then `odoo db drop <testdb>` (https://www.odoo.com/documentation/19.0/developer/reference/backend/testing.html). The host's container and ports are in its STACK file.
+2. **Module installation and tests, Odoo's documented way, on the host's one local database** -- never an ephemeral container, a test database or a copy: install with `odoo module install -d <local db> <module>`, then `odoo -d <local db> -u <module> --test-tags /<module> --stop-after-init` on spare ports (https://www.odoo.com/documentation/19.0/developer/reference/backend/testing.html). The host's container, database and ports are in its STACK file.
 3. **Error diagnosis** -- Matches error logs against a library of 25 common Odoo error patterns and provides human-readable explanations with fix suggestions.
 
 ## How to Invoke
@@ -49,7 +49,7 @@ amil-utils validate /path/to/module --pylintrc /path/to/.pylintrc-odoo
 The validation report has three sections plus optional diagnosis:
 
 1. **pylint-odoo Violations** -- Table with file:line, rule code, severity, and message
-2. **Install** -- PASS or FAIL (with error detail) from the fresh-test-database install in the host's Odoo container
+2. **Install** -- PASS or FAIL (with error detail) from the install on the host's local database
 3. **Test Results** -- Per-test PASS/FAIL table with error messages
 4. **Diagnosis** (if errors found) -- Pattern-matched explanations with suggested fixes
 
