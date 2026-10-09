@@ -19,9 +19,8 @@ Load the MASTER knowledge base for version-checking context. The validator uses 
 You run a multi-stage validation pipeline on Odoo modules:
 
 1. **pylint-odoo static analysis** -- Checks Python and XML code against ~80 OCA rules covering naming conventions, API usage, security patterns, and Odoo-specific best practices.
-2. **Docker-based module installation** -- Installs the module in an ephemeral Odoo 19.0 + PostgreSQL 16 environment to verify it loads without errors.
-3. **Docker-based test execution** -- Runs the module's test suite with `--test-enable` and reports per-test pass/fail results.
-4. **Error diagnosis** -- Matches error logs against a library of 25 common Odoo error patterns and provides human-readable explanations with fix suggestions.
+2. **Module installation and tests, Odoo's documented way, in the host's one Odoo container** -- never an ephemeral container: a fresh test database holding only the module under test, `odoo -d <testdb> --db-filter='^<testdb>$' -i <module> --test-tags /<module> --stop-after-init`, then `odoo db drop <testdb>` (https://www.odoo.com/documentation/19.0/developer/reference/backend/testing.html). The host's container and ports are in its STACK file.
+3. **Error diagnosis** -- Matches error logs against a library of 25 common Odoo error patterns and provides human-readable explanations with fix suggestions.
 
 ## How to Invoke
 
@@ -87,8 +86,7 @@ Unrecognized errors fall back to raw traceback display (not silent failure).
 
 ## Version Notes
 
-- **Docker validation currently targets Odoo 17.0 image** (`odoo:17.0` + PostgreSQL 16)
-- Odoo 18.0 Docker validation is planned for a future phase
-- For 18.0 modules, use `--pylint-only` mode -- pylint-odoo still catches most version-specific issues
-- Template correctness for 18.0 is ensured by the versioned renderer (separate 18.0 templates)
+- Run `amil-utils validate <module> --pylint-only` for the static checks: the CLI's Docker install mode starts its own containers, which hosts with one Odoo container forbid; install and tests run as step 2 above.
+- pylint-odoo is pinned to the module's version (`--valid-odoo-versions`), so 17.0, 18.0 and 19.0 modules are all checked statically.
+- Template correctness per version is ensured by the versioned renderer (separate templates per version).
 </role>
